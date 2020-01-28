@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+">
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config"
+                          doc:id="c895db90-597b-4c79-905f-08c76d8aea3d">
+        <http:listener-connection host="0.0.0.0" port="${http.port}"/>
+    </http:listener-config>
+    <apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router"
+                   doc:id="f91b50ff-aca1-4cd1-8e74-8358354828c4" name="Router" raml="api/health-check-api-mule4.raml"/>
+    <flow name="health-check-api-mule4Flow" doc:id="c0ec642e-8006-499c-8077-cf852a3094c8">
+        <http:listener doc:name="Listener" doc:id="43e0564d-aba4-48c4-86ba-490ac1462fae"
+                       config-ref="HTTP_Listener_config" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]"/>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+
+        <apikit:router doc:name="APIkit Router" doc:id="9a44952e-0125-4198-a1da-a10d630fe267" config-ref="Router"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <set-variable value="400" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <set-variable value="404" doc:name="Set HTTP Status code" doc:id="5f6f2bd7-a208-4998-a35c-a18eef871ae1"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="8fc5a7ea-ba62-4053-bd85-c2a51cc6cd09"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <set-variable value="405" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <set-variable value="406" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <set-variable value="415" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <set-variable value="501" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate"
+                                doc:id="5d14246f-b613-44f0-9c61-6028e61493a6" type="ANY">
+                <set-variable value="500" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73"
+                              variableName="httpStatus"/>
+                <flow-ref doc:name="error-handling-Sub_Flow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96"
+                          name="error-handling-Sub_Flow"/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="health-check-api-mule4Flow1" doc:id="89e11842-84bd-4908-90e4-27ba49d04a77">
+        <http:listener doc:name="Listener" doc:id="8919769b-c17e-4d9a-875b-722730225e20"
+                       config-ref="HTTP_Listener_config" path="/console/*"/>
+        <apikit:console doc:name="APIkit Console" doc:id="05e65de3-27d3-4369-9241-8f8790a3efe1" config-ref="Router"/>
+    </flow>
+</mule>
