@@ -1,0 +1,23 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  muleProperties:
+    type: !include mule-properties.raml
+    description: Properties Related to Mule
+  jvmProperties:
+    type: !include jvm-properties.raml
+    description: Properties Related to Java Virtual Machine(JVM)
+  osProperties:
+    type: !include os-properties.raml
+    description: Properties related to the Operating System
+  timestamp:
+    type: datetime
+    description: Current Timstamp when the health check was made
+    example: "2019-07-30T09:30:10Z"
+  correlationId:
+    type: string
+    description: universally unique identifier for identifying the request
+    example: "648c5fb2-0d74-11ea-9dab-105bad3268d7"
+  systems:
+    type: array
+    items: !include app-properties.raml

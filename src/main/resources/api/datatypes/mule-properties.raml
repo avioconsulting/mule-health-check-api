@@ -1,0 +1,31 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  muleRuntime:
+    type: string
+    description: The mule runtime version the application is running on
+    example: "4.2.0"
+  apiName:
+    type: string
+    description: API name the application is part of
+    example: "test-system-api"
+  url:
+    type: string
+    description: Url of the health check
+    example: "http://198.168.10.67:8081/example-api/health/check"      
+  server:
+    type: string
+    description: Name of the Server
+    example: "AC0084"
+  ip:
+    type: string
+    description: IP address of the machine
+    example: "172.27.112.1"
+  timeZone:
+    type: string
+    description: Time zone of the server
+    example: "America/Chicago"
+  environment:
+    type: string
+    description: Environment in which the api is running
+    example: "DEV"

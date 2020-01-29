@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <apikit:config name="health-check-api-config" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" raml="api/health-check-api.raml"/>
+    <configuration-properties doc:name="Configuration properties" doc:id="88c27769-b67c-45e0-9b67-de406d4db851" file="health-check-api.properties" />
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6edfe7ff-049a-4213-a5b8-fb444bb2dab7" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+	<flow name="health-check-api-main">
+        <http:listener config-ref="HTTP_Listener_config" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="health-check-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="205ab607-99d2-4d3a-bb2f-2bdddd799bca">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="7c02d5ff-c54e-4c51-bc71-01cc8fb2f49d">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="b37af966-5e58-4ded-ab80-edeac22e5a87">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\health:health-check-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="ebb05576-cd0a-4e24-980a-a14956e220e6">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  muleProperties: {
+    muleRuntime: "3.9.3",
+    apiName: "health-check-api",
+    server: "AC0084",
+    url: "http://localhost:8081/lib/health/check",
+    ip: "10.0.75.1",
+    timeZone: "America/Chicago",
+    environment: "\${env}"
+  },
+  jvmProperties: {
+    pid: "29488@AC0084",
+    vmName: "Java HotSpot(TM) 64-Bit Server VM",
+    vmVendor: "Oracle Corporation",
+    vmVersion: "1.8.0_231",
+    locale: "English (United States)",
+    memory: {
+      heapMemoryUsage: {
+        init: 264241152,
+        used: 212208352,
+        committed: 513802240,
+        max: 3756523520
+      },
+      nonHeapMemoryUsage: {
+        init: 2555904,
+        used: 61171016,
+        committed: 62193664,
+        max: -1
+      }
+    },
+    threadCount: {
+      activeThreadCount: 54,
+      daemonThreadCount: 48
+    },
+    garbageCollection: [
+      {
+        gcName: "PS Scavenge",
+        collectionCount: 8,
+        collectionTime: 67
+      }, 
+      {
+        gcName: "PS MarkSweep",
+        collectionCount: 2,
+        collectionTime: 221
+      }
+    ]
+  },
+  osProperties: {
+    osName: "Windows 10",
+    osVersion: "10.0",
+    osArchitechture: "amd64",
+    systemLoadAverage: -1.0,
+    availableProcessors: 12,
+    freePhysicalMemorySize: 3750350848,
+    processCpuTime: 14437500000,
+    systemCpuLoad: 0.0,
+    processCpuLoad: 0.05657935521623634
+  },
+  timestamp: "2019-12-27T11:23:18.168-06:00",
+  correlationId: "925bfc10-28cd-11ea-b774-105bad3268d7",
+  systems: [
+    {
+      systemName: "HTTPS",
+      connectionConfig: "api-dev.srs.aws.avioconsulting.com:443/orders-system-api",
+      user: "N/A",
+      status: "OK",
+      exception: "N/A",
+      timestamp: "2020-01-07 10:43:11"
+    }, 
+    {
+      systemName: "Amazon S3",
+      connectionConfig: "N/A",
+      user: "N/A",
+      status: "ERROR",
+      exception: "N/A",
+      timestamp: "2020-01-07 10:43:21"
+    }, 
+    {
+      systemName: "SQLServer",
+      connectionConfig: "jdbc:sqlserver://localhost;ODSAPI;ODSApiApp",
+      user: "N/A",
+      status: "UNKNOWN",
+      exception: "N/A",
+      timestamp: "2020-01-07 10:43:34"
+    }
+  ]
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\health\app:health-check-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="4a2f05af-1315-4732-9104-13c2209e3cd3">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  muleProperties: {
+    muleRuntime: "3.9.3",
+    apiName: "health-check-api",
+    server: "AC0084",
+    url: "http://localhost:8081/lib/health/check",
+    ip: "10.0.75.1",
+    timeZone: "America/Chicago",
+    environment: "\${env}"
+  },
+  systems: [
+    {
+      systemName: "HTTPS",
+      connectionConfig: "api-dev.srs.aws.avioconsulting.com:443/orders-system-api",
+      user: "N/A",
+      status: "OK",
+      exception: "N/A",
+      timestamp: "2020-01-07 10:43:11"
+    }, 
+    {
+      systemName: "Amazon S3",
+      connectionConfig: "N/A",
+      user: "N/A",
+      status: "ERROR",
+      exception: "N/A",
+      timestamp: "2020-01-07 10:43:21"
+    }, 
+    {
+      systemName: "SQLServer",
+      connectionConfig: "jdbc:sqlserver://localhost;ODSAPI;ODSApiApp",
+      user: "N/A",
+      status: "UNKNOWN",
+      exception: "N/A",
+      timestamp: "2020-01-07 10:43:34"
+    }
+  ]
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\health\runtime:health-check-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="5d15e99b-80c6-4709-8c5d-e88ae0c6ff1b">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  muleProperties: {
+    muleRuntime: "3.9.3",
+    apiName: "health-check-api",
+    server: "AC0084",
+    url: "http://localhost:8081/lib/health/check",
+    ip: "10.0.75.1",
+    timeZone: "America/Chicago",
+    environment: "\${env}"
+  },
+  jvmProperties: {
+    pid: "29488@AC0084",
+    vmName: "Java HotSpot(TM) 64-Bit Server VM",
+    vmVendor: "Oracle Corporation",
+    vmVersion: "1.8.0_231",
+    locale: "English (United States)",
+    memory: {
+      heapMemoryUsage: {
+        init: 264241152,
+        used: 212208352,
+        committed: 513802240,
+        max: 3756523520
+      },
+      nonHeapMemoryUsage: {
+        init: 2555904,
+        used: 61171016,
+        committed: 62193664,
+        max: -1
+      }
+    },
+    threadCount: {
+      activeThreadCount: 54,
+      daemonThreadCount: 48
+    },
+    garbageCollection: [
+      {
+        gcName: "PS Scavenge",
+        collectionCount: 8,
+        collectionTime: 67
+      }, 
+      {
+        gcName: "PS MarkSweep",
+        collectionCount: 2,
+        collectionTime: 221
+      }
+    ]
+  },
+  osProperties: {
+    osName: "Windows 10",
+    osVersion: "10.0",
+    osArchitechture: "amd64",
+    systemLoadAverage: -1.0,
+    availableProcessors: 12,
+    freePhysicalMemorySize: 3750350848,
+    processCpuTime: 14437500000,
+    systemCpuLoad: 0.0,
+    processCpuLoad: 0.05657935521623634
+  },
+  timestamp: "2019-12-27T11:23:18.168-06:00",
+  correlationId: "925bfc10-28cd-11ea-b774-105bad3268d7"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+     <sub-flow name="error-handling-Sub_Flow" doc:id="6f08638d-8168-4d16-8896-b98c527925ba" >
+        <ee:transform doc:name="Prepare Exception Response" doc:id="721d6c71-9627-4e3d-8eb7-75a87bfa069a" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode: vars.httpStatus,
+  	error: {
+  		"type": error.errorType.namespace ++ ":" ++ error.errorType.identifier,
+  		message: error.description default "Unhandled Exception"
+  	}
+}]]></ee:set-payload>
+            </ee:message>
+            <ee:variables >
+            </ee:variables>
+        </ee:transform>
+    </sub-flow>
+</mule>

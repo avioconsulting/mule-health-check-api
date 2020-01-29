@@ -1,0 +1,21 @@
+#%RAML 1.0 Trait
+responses: 
+      400:
+        description: Bad request
+        body: 
+          application/json:
+            type: !include ../datatypes/error-response-dataType.raml
+            example: !include ../examples/error-responses/bad-request-example.raml
+      405:
+        description: Method not allowed
+        body:
+          application/json:
+            type: !include ../datatypes/error-response-dataType.raml
+            example: !include ../examples/error-responses/method-not-allowed-example.raml
+
+      500:
+        description: Internal Server Error
+        body:
+          application/json:
+            type: !include ../datatypes/error-response-dataType.raml
+            example: !include ../examples/error-responses/internal-server-error-example.raml

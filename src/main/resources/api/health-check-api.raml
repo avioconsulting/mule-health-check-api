@@ -1,0 +1,50 @@
+#%RAML 1.0
+title: Health Check API
+version: v1.0.3
+
+traits:
+  error: !include traits/error-response-trait.raml
+  security: !include traits/client-id-secret-trait.raml
+
+types:
+  health: !include datatypes/health.raml  
+  health-app: !include datatypes/health-app.raml
+  health-runtime: !include datatypes/health-runtime.raml
+
+/health:
+  is: [error, security]
+  get:
+    description: Health Check for Generic and App Specific data
+    responses:
+      200:
+        body:
+          application/json:
+            type: health
+            example: !include examples/health-response.raml
+            
+/health/runtime:
+  is: [error, security]
+  get:
+    description: Performs a Generic health check of the API
+    responses:
+      200:
+        body:
+          application/json:
+            type: health-runtime
+            example: !include examples/health-runtime-response.raml
+
+/health/app:
+  is: [error, security]
+  get:
+    description: Performs the health check of the application
+    responses:
+      200:
+        body:
+          application/json:
+            type: health-app
+            example: !include examples/health-app-response.raml
+      500:
+        body:
+          application/json:
+            type: health-app
+            example: !include examples/health-app-failure-response.raml
