@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+<mule xmlns:avio-core="http://www.mulesoft.org/schema/mule/avio-core"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/avio-core http://www.mulesoft.org/schema/mule/avio-core/current/mule-avio-core.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <apikit:config name="health-check-api-config" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" raml="api/health-check-api.raml"/>
     <configuration-properties doc:name="Configuration properties" doc:id="88c27769-b67c-45e0-9b67-de406d4db851" file="health-check-api.properties" />
-    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config" doc:id="6edfe7ff-049a-4213-a5b8-fb444bb2dab7" >
-		<http:listener-connection host="0.0.0.0" port="${http.port}" />
-	</http:listener-config>
+	<avio-core:config name="AVIO_Core_Config" doc:name="AVIO Core Config" doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb" app_version="${health.app.version}" app_name="${health.app.name}"/>
+	
 	<flow name="health-check-api-main">
         <http:listener config-ref="${healthcheck.https.configuration.reference}" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -15,6 +16,8 @@
                 <http:body><![CDATA[#[payload]]]></http:body>
             </http:error-response>
         </http:listener>
+        <set-variable variableName="correlation_id"
+			value="#[message.attributes.guid default uuid()]" doc:name="set correlationId" />
         <apikit:router config-ref="health-check-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true">
@@ -192,9 +195,7 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-    </flow>
-    <flow name="get:\health\app:health-check-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="4a2f05af-1315-4732-9104-13c2209e3cd3">
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="4a2f05af-1315-4732-9104-13c2209e3cd3">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -238,6 +239,35 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+    </flow>
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config" doc:id="6edfe7ff-049a-4213-a5b8-fb444bb2dab7">
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="get:\health\app:health-check-api-config">
+		<avio-core:custom-logger doc:name="Log Start" doc:id="1c925648-91a3-4b79-a6e6-84f5b27a4c1e" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for App health Check"/>
+        <flow-ref doc:name="mule-stats-flow" doc:id="a8ab7419-a80c-45b4-b9b8-74fb58cf12f9" name="mule-stats-flow" target="muleStats" targetValue="#[payload]"/>
+		<flow-ref doc:name="app-stats-flow" doc:id="10e607d8-6781-4893-993b-c278272e11cf" name="app-stats-flow" target="appStats" targetValue="#[payload]"/>
+		<ee:transform doc:name="set System Status" doc:id="e5a538fd-dac4-4612-90e2-d9bc13871d20">
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.appStats.systemStatus]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Concat Result" doc:id="5bc95f82-4b4a-4409-b036-6c989c28d547" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.muleStats ++
+vars.appStats.backendSystems
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<avio-core:custom-logger doc:name="Log End" doc:id="5249e6ff-ba3b-4b40-abef-a9e8f9e9acd3" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for App health Check"/>
     </flow>
     <flow name="get:\health\runtime:health-check-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="5d15e99b-80c6-4709-8c5d-e88ae0c6ff1b">
@@ -309,7 +339,114 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-     <sub-flow name="error-handling-Sub_Flow" doc:id="6f08638d-8168-4d16-8896-b98c527925ba" >
+     <flow name="health-check-apiFlow" doc:id="4392435c-9aa1-4595-83cb-84b9a710d232" >
+		<ee:transform doc:name="Transform Message" doc:id="9fc07b31-8626-4c25-88b2-be499b1b00ef" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="runtime-stats-flow" doc:id="996e0c0b-5b66-496c-b089-2bb4c8deaa03" >
+		<avio-core:custom-logger doc:name="Log Start" doc:id="ac6252c0-dd2a-46d4-9a8a-e483119257f8" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start processing request for Runtime Stats Flow"/>
+		<avio-core:custom-logger doc:name="Log End" doc:id="14df32f4-b433-4b28-bacf-354697c8b016" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed processing request for Runtime Stats Flow"/>
+	</flow>
+	<flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
+		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
+		<ee:transform doc:name="Transform Message" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{ 
+	"muleRuntime" : mule.version,
+	"server" : server.host,
+	"ip" : server.ip,
+	"apiName" : p("app.name") default "",
+	//"timeZone" : server.timeZone,
+	"url" : "",
+	"environment": p('env') 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<avio-core:custom-logger doc:name="Log End" doc:id="07bb2003-fb21-4dab-affe-26b1661af2c5" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}"/>
+	</flow>
+	<flow name="app-stats-flow" doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348" > 
+		<avio-core:custom-logger doc:name="Log Start" doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
+		<ee:transform doc:name="Transform Message" doc:id="86bc16cb-7d4b-413a-b314-46c253b9cc4b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+(p('healthcheck.flows') splitBy ",") default ""
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Init" doc:id="c43f3ceb-a5db-4642-848b-6b55bb83ae23" >
+			<ee:variables >
+				<ee:set-variable variableName="aggregator" ><![CDATA[%dw 2.0
+output application/java
+---
+[]
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="358eb889-b1d1-4d51-a05e-be10b59c16ae" >
+			<when expression='#[payload != ""]'>
+				<foreach doc:name="For Each" doc:id="2296ddab-5006-4be0-96b3-4ebc20af23e0" collection="#[payload]">
+					<flow-ref name="#[payload]" doc:name="each app flows" doc:id="63817cd0-51b6-4344-8091-235a2c5102a3" target="result" targetValue="#[payload]"/>
+					<ee:transform doc:name="Reassign aggregator" doc:id="ab6247eb-335c-42a9-be0e-86b077f51cca">
+						<ee:variables >
+							<ee:set-variable variableName="aggregator" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.aggregator + vars.result]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+				</foreach>
+				<ee:transform doc:name="Transform Message" doc:id="80950302-4755-43f8-b671-ac377285f1e0">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+var total = sizeOf(vars.aggregator)
+var result = flatten(vars.aggregator)
+---
+{
+	backendSystems : {
+		systems: result
+	},
+    systemStatus : if (sizeOf(result filter ((item, index) -> item.status=="OK")) < total) ("500") else ("200")
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="0444bd48-a7b9-479a-866a-910efd391994" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	backendSystems : {
+		systems:[]
+	},
+	systemStatus : 200
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<avio-core:custom-logger doc:name="Log End" doc:id="7f361100-f2cd-4c91-8e7a-050c297eb592" config-ref="AVIO_Core_Config" correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" />
+	</flow>
+	<sub-flow name="error-handling-Sub_Flow" doc:id="6f08638d-8168-4d16-8896-b98c527925ba" >
         <ee:transform doc:name="Prepare Exception Response" doc:id="721d6c71-9627-4e3d-8eb7-75a87bfa069a" >
             <ee:message >
                 <ee:set-payload ><![CDATA[%dw 2.0
@@ -327,4 +464,36 @@ output application/json
             </ee:variables>
         </ee:transform>
     </sub-flow>
+	<sub-flow name="flow1" doc:id="739425df-1748-4f80-8147-9261396aa8f7" >
+		<ee:transform doc:name="Transform Message" doc:id="2d7b5528-58f9-4ad1-ad6c-1303f6cf8115" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+        systemName: "HTTPS",
+        connectionConfig: "N/A",
+        user : "N/A",
+        status: "Error",
+        timeStamp : ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="flow2" doc:id="a018fec4-5f43-43c6-ac8d-46788be715fd" >
+		<ee:transform doc:name="Transform Message" doc:id="982eb2aa-6858-45e7-a7ca-de34a54cd44b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+        systemName: "DB",
+        connectionConfig: "N/A",
+        user : "N/A",
+        status: "OK",
+        timeStamp : ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
 </mule>

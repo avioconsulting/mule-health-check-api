@@ -41,7 +41,7 @@
 					</cloudHubDeployment>
 					<sharedLibraries>
 					</sharedLibraries>
-					<classifier>mule-application</classifier>
+					<classifier>mule-plugin</classifier>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -71,7 +71,13 @@
             <version>1.0.2</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-	</dependencies>
+		<dependency>
+            <groupId>26d53683-6746-4040-ad07-f671f8e2b27e</groupId>
+            <artifactId>mule-custom-logger</artifactId>
+            <version>1.0.0</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <repository>
