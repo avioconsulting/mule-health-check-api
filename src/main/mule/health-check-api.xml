@@ -195,50 +195,28 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="4a2f05af-1315-4732-9104-13c2209e3cd3">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+        <error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7ee8a3b1-8b74-4d6f-bef6-142ebfc867fb" >
+				<ee:transform doc:name="Set Http Status" doc:id="186b9614-87e4-4c31-8994-3ec980889042">
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<ee:transform doc:name="Set Error Message" doc:id="a3453910-b08e-463a-a7e4-199e9cf1d123" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-  muleProperties: {
-    muleRuntime: "3.9.3",
-    apiName: "health-check-api",
-    server: "AC0084",
-    url: "http://localhost:8081/lib/health/check",
-    ip: "10.0.75.1",
-    timeZone: "America/Chicago",
-    environment: "\${env}"
-  },
-  systems: [
-    {
-      systemName: "HTTPS",
-      connectionConfig: "api-dev.srs.aws.avioconsulting.com:443/orders-system-api",
-      user: "N/A",
-      status: "OK",
-      exception: "N/A",
-      timestamp: "2020-01-07 10:43:11"
-    }, 
-    {
-      systemName: "Amazon S3",
-      connectionConfig: "N/A",
-      user: "N/A",
-      status: "ERROR",
-      exception: "N/A",
-      timestamp: "2020-01-07 10:43:21"
-    }, 
-    {
-      systemName: "SQLServer",
-      connectionConfig: "jdbc:sqlserver://localhost;ODSAPI;ODSApiApp",
-      user: "N/A",
-      status: "UNKNOWN",
-      exception: "N/A",
-      timestamp: "2020-01-07 10:43:34"
-    }
-  ]
+	 "message" : "There was an error getting the health stats of the machine , please check logs for more details."
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
     </flow>
     <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config" doc:id="6edfe7ff-049a-4213-a5b8-fb444bb2dab7">
 		<http:listener-connection host="0.0.0.0" port="8081" />
@@ -268,6 +246,28 @@ vars.appStats.backendSystems
 		</ee:transform>
 		<avio-core:custom-logger doc:name="Log End" doc:id="5249e6ff-ba3b-4b40-abef-a9e8f9e9acd3" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for App health Check"/>
+    <error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6de6a774-13a6-4bd7-b1a0-9230c6e25b7c" >
+				<ee:transform doc:name="Set Http Status" doc:id="27e3853a-d3f5-4d92-b078-21d9a13244c0">
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<ee:transform doc:name="Set Error Message" doc:id="6ff819b7-fe12-4a23-8768-1cd8e956cac1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	 "message" : "There was an error getting the health stats of the machine , please check logs for more details."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
     </flow>
     <flow name="get:\health\runtime:health-check-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="5d15e99b-80c6-4709-8c5d-e88ae0c6ff1b">
@@ -338,6 +338,28 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+        <error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="31c81402-9815-419f-8180-a93056682833" >
+				<ee:transform doc:name="Set Http Status" doc:id="b1456f29-e933-4a81-a197-e3c255e1e2e0">
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
+output application/java
+---
+500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<ee:transform doc:name="Set Error Message" doc:id="1ad45660-b0a7-43a2-a688-128bc15a9394" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	 "message" : "There was an error getting the health stats of the machine , please check logs for more details."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
     </flow>
      <flow name="health-check-apiFlow" doc:id="4392435c-9aa1-4595-83cb-84b9a710d232" >
 		<ee:transform doc:name="Transform Message" doc:id="9fc07b31-8626-4c25-88b2-be499b1b00ef" >
@@ -445,6 +467,7 @@ output application/java
 			</otherwise>
 		</choice>
 		<avio-core:custom-logger doc:name="Log End" doc:id="7f361100-f2cd-4c91-8e7a-050c297eb592" config-ref="AVIO_Core_Config" correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" />
+		
 	</flow>
 	<sub-flow name="error-handling-Sub_Flow" doc:id="6f08638d-8168-4d16-8896-b98c527925ba" >
         <ee:transform doc:name="Prepare Exception Response" doc:id="721d6c71-9627-4e3d-8eb7-75a87bfa069a" >
