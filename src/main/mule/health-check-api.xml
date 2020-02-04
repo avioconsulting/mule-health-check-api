@@ -330,18 +330,19 @@ var jvmStats = payload
 	<flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
 		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
-		<ee:transform doc:name="Transform Message" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<logger message="#[Java::invoke('java.util.TimeZone', 'getDisplayName()', server.timeZone, {})]" level="ERROR" doc:id="08eaf019-5884-44f3-ab14-05af5bac821d"/> 
+		<ee:transform doc:name="Transform Message" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ---
 { 
 	"muleRuntime" : mule.version,
-	"server" : server.host,
-	"ip" : server.ip,
 	"apiName" : p("app.name") default "",
-	//"timeZone" : server.timeZone,
-	"url" : "",
+	"server" : server.host,
+	"url": attributes.scheme ++ '://'  ++ attributes.headers.host ++ attributes.rawRequestPath,
+	"ip" : server.ip,
+	"timeZone" : Java::invoke('java.util.TimeZone', 'getDisplayName()', server.timeZone, {}),
 	"environment": p('env') 
 }]]></ee:set-payload>
 			</ee:message>
