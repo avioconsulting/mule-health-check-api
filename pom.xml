@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.avioconsulting</groupId>
     <artifactId>health-check-api-mule4</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>mule-application</packaging>
     <name>Health Check API Mule4</name>
     <properties>
@@ -41,7 +41,7 @@
 					</cloudHubDeployment>
 					<sharedLibraries>
 					</sharedLibraries>
-					<classifier>mule-application</classifier>
+					<classifier>mule-plugin</classifier>
 				</configuration>
 			</plugin>
 		<plugin>
