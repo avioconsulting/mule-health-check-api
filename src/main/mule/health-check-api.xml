@@ -4,6 +4,9 @@
 http://www.mulesoft.org/schema/mule/avio-core http://www.mulesoft.org/schema/mule/avio-core/current/mule-avio-core.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	    <!--  <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config" doc:id="79acc61d-6630-417d-8a1a-6ae9efab4eb7">
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config> -->
     <apikit:config name="health-check-api-config" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" raml="api/health-check-api.raml"/>
     <configuration-properties doc:name="Configuration properties" doc:id="88c27769-b67c-45e0-9b67-de406d4db851" file="health-check-api.properties" />
 	<avio-core:config name="AVIO_Core_Config" doc:name="AVIO Core Config" doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb" app_version="${health.app.version}" app_name="${health.app.name}"/>
@@ -154,9 +157,6 @@ output application/json
 			</on-error-propagate>
 		</error-handler>
     </flow>
-    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config" doc:id="6edfe7ff-049a-4213-a5b8-fb444bb2dab7">
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
 	<flow name="get:\health\app:health-check-api-config">
 		<avio-core:custom-logger doc:name="Log Start" doc:id="1c925648-91a3-4b79-a6e6-84f5b27a4c1e" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for App health Check"/>
@@ -210,7 +210,8 @@ output application/json
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for Runtime health Check"/>
         <flow-ref doc:name="mule-stats-flow" doc:id="5fb31361-4922-401f-889f-ca7f9f74186e" name="mule-stats-flow" target="muleStats" targetValue="#[payload]"/>
         <flow-ref doc:name="runtime-stats-flow" doc:id="07857409-fff3-4df3-9479-1f1cb4e03e7a" name="runtime-stats-flow" target="runtimeStats" targetValue="#[payload]"/>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="5d15e99b-80c6-4709-8c5d-e88ae0c6ff1b">
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="5d15e99b-80c6-4709-8c5d-e88ae0c6ff1b">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
