@@ -438,36 +438,4 @@ output application/json
             </ee:variables>
         </ee:transform>
     </sub-flow>
-	<sub-flow name="flow1" doc:id="739425df-1748-4f80-8147-9261396aa8f7" >
-		<ee:transform doc:name="Transform Message" doc:id="2d7b5528-58f9-4ad1-ad6c-1303f6cf8115" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-        systemName: "HTTPS",
-        connectionConfig: "N/A",
-        user : "N/A",
-        status: "Error",
-        timeStamp : ""
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</sub-flow>
-	<sub-flow name="flow2" doc:id="a018fec4-5f43-43c6-ac8d-46788be715fd" >
-		<ee:transform doc:name="Transform Message" doc:id="982eb2aa-6858-45e7-a7ca-de34a54cd44b" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-        systemName: "DB",
-        connectionConfig: "N/A",
-        user : "N/A",
-        status: "OK",
-        timeStamp : ""
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</sub-flow>
 </mule>
