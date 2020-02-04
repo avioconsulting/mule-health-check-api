@@ -102,100 +102,35 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\health:health-check-api-config">
+    	<avio-core:custom-logger doc:name="Log Start" doc:id="836ce6e0-a87d-4835-8859-99be0347f475" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for Health Check"/>
+		<flow-ref doc:name="mule-stats-flow" doc:id="acc32800-adc6-4653-a257-c5a6a3ce70ff" name="mule-stats-flow" target="muleStats" targetValue="#[payload]"/>
+		<flow-ref doc:name="runtime-stats-flow" doc:id="808e14da-bf02-4995-8967-8ffbdb2e4b7c" name="runtime-stats-flow" target="runtimeStats" targetValue="#[payload]"/>
+		<flow-ref doc:name="app-stats-flow" doc:id="fdeec859-dfb6-4aab-8c79-ed8185e89dd1" name="app-stats-flow" target="appStats" targetValue="#[payload]"/>
+		<ee:transform doc:name="set System Status" doc:id="d0dd1ef7-bbf4-4153-9dd8-24e9f04262e4">
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.appStats.systemStatus]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="ebb05576-cd0a-4e24-980a-a14956e220e6">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
+vars.muleStats ++
+vars.runtimeStats ++ 
+vars.appStats.backendSystems ++
 {
-  muleProperties: {
-    muleRuntime: "3.9.3",
-    apiName: "health-check-api",
-    server: "AC0084",
-    url: "http://localhost:8081/lib/health/check",
-    ip: "10.0.75.1",
-    timeZone: "America/Chicago",
-    environment: "\${env}"
-  },
-  jvmProperties: {
-    pid: "29488@AC0084",
-    vmName: "Java HotSpot(TM) 64-Bit Server VM",
-    vmVendor: "Oracle Corporation",
-    vmVersion: "1.8.0_231",
-    locale: "English (United States)",
-    memory: {
-      heapMemoryUsage: {
-        init: 264241152,
-        used: 212208352,
-        committed: 513802240,
-        max: 3756523520
-      },
-      nonHeapMemoryUsage: {
-        init: 2555904,
-        used: 61171016,
-        committed: 62193664,
-        max: -1
-      }
-    },
-    threadCount: {
-      activeThreadCount: 54,
-      daemonThreadCount: 48
-    },
-    garbageCollection: [
-      {
-        gcName: "PS Scavenge",
-        collectionCount: 8,
-        collectionTime: 67
-      }, 
-      {
-        gcName: "PS MarkSweep",
-        collectionCount: 2,
-        collectionTime: 221
-      }
-    ]
-  },
-  osProperties: {
-    osName: "Windows 10",
-    osVersion: "10.0",
-    osArchitechture: "amd64",
-    systemLoadAverage: -1.0,
-    availableProcessors: 12,
-    freePhysicalMemorySize: 3750350848,
-    processCpuTime: 14437500000,
-    systemCpuLoad: 0.0,
-    processCpuLoad: 0.05657935521623634
-  },
-  timestamp: "2019-12-27T11:23:18.168-06:00",
-  correlationId: "925bfc10-28cd-11ea-b774-105bad3268d7",
-  systems: [
-    {
-      systemName: "HTTPS",
-      connectionConfig: "api-dev.srs.aws.avioconsulting.com:443/orders-system-api",
-      user: "N/A",
-      status: "OK",
-      exception: "N/A",
-      timestamp: "2020-01-07 10:43:11"
-    }, 
-    {
-      systemName: "Amazon S3",
-      connectionConfig: "N/A",
-      user: "N/A",
-      status: "ERROR",
-      exception: "N/A",
-      timestamp: "2020-01-07 10:43:21"
-    }, 
-    {
-      systemName: "SQLServer",
-      connectionConfig: "jdbc:sqlserver://localhost;ODSAPI;ODSApiApp",
-      user: "N/A",
-      status: "UNKNOWN",
-      exception: "N/A",
-      timestamp: "2020-01-07 10:43:34"
-    }
-  ]
+	"timestamp": now(),
+	"correlationId" : vars.correlation_id   
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+        <avio-core:custom-logger doc:name="Log End" doc:id="bf64762d-25eb-4b8f-af0f-a16a59140060" config-ref="AVIO_Core_Config" 
+			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for Health Check"/>
         <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7ee8a3b1-8b74-4d6f-bef6-142ebfc867fb" >
 				<ee:transform doc:name="Set Http Status" doc:id="186b9614-87e4-4c31-8994-3ec980889042">
@@ -339,7 +274,7 @@ output application/java
 		<ee:transform doc:name="Transform Message" doc:id="81a314d4-0cc0-4039-9fd0-00653c6c0281" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
+output application/java
 
 var jvmStats = payload
 ---
