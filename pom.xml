@@ -41,10 +41,20 @@
 					</cloudHubDeployment>
 					<sharedLibraries>
 					</sharedLibraries>
-					<classifier>mule-plugin</classifier>
+					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
-		</plugins>
+		<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <args>-parameters</args>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
     <dependencies>
         <dependency>
@@ -75,6 +85,12 @@
             <groupId>26d53683-6746-4040-ad07-f671f8e2b27e</groupId>
             <artifactId>mule-custom-logger</artifactId>
             <version>1.0.0</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+    	<dependency>
+            <groupId>org.mule.module</groupId>
+            <artifactId>mule-java-module</artifactId>
+            <version>1.2.5</version>
             <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
