@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<avio-core:config name="AVIO_Core_Config" doc:name="AVIO Core Config" doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb" app_version="${health.app.version}" app_name="${health.app.name}"/>
 	
 	<flow name="health-check-api-main">
-        <http:listener config-ref="${healthcheck.https.configuration.reference}" path="/api/*">
+        <http:listener config-ref="${healthcheck.https.configuration.reference}" path="/monitor/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
@@ -19,7 +19,8 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
         </http:listener>
         <set-variable variableName="correlation_id"
 			value="#[message.attributes.guid default uuid()]" doc:name="set correlationId" />
-        <apikit:router config-ref="health-check-api-config" />
+        <set-variable value="#[now()]" doc:name="set timestamp" doc:id="01f5d3ae-b281-4c48-baf3-c453738f0839" variableName="timestamp"/>
+		<apikit:router config-ref="health-check-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="205ab607-99d2-4d3a-bb2f-2bdddd799bca">
@@ -27,75 +28,29 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Bad request"}]]></ee:set-payload>
+{     
+"errorType": "Bad Request",     
+"message": "Unable to process the request" 
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="7c02d5ff-c54e-4c51-bc71-01cc8fb2f49d">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED" enableNotifications="true" logException="true">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="b37af966-5e58-4ded-ab80-edeac22e5a87">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{message: "Method not allowed"}]]></ee:set-payload>
+{    
+"errorType": "Method not allowed",       
+"message": "The method doesn't exists or is not allowed"    
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not acceptable"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Unsupported media type"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not Implemented"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
@@ -239,14 +194,14 @@ output application/java
 output application/json
 ---
 {
-	 "message" : "There was an error getting the health stats of the machine , please check logs for more details."
+	"message" : "There was an error getting the health stats of the machine , please check logs for more details."
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			</on-error-propagate>
 		</error-handler>
     </flow>
-	<flow name="runtime-stats-flow" doc:id="996e0c0b-5b66-496c-b089-2bb4c8deaa03" >
+	<sub-flow name="runtime-stats-flow" doc:id="996e0c0b-5b66-496c-b089-2bb4c8deaa03" >
 		<avio-core:custom-logger doc:name="Log Start" doc:id="ac6252c0-dd2a-46d4-9a8a-e483119257f8" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start processing request for Runtime Stats Flow"/>
 		<ee:transform doc:name="Retrive System Props" doc:id="c0ef994e-ed55-46a4-a1ae-e2ec200459ad">
@@ -324,8 +279,8 @@ var jvmStats = payload
 		</ee:transform>
 		<avio-core:custom-logger doc:name="Log End" doc:id="14df32f4-b433-4b28-bacf-354697c8b016" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed processing request for Runtime Stats Flow"/>
-	</flow>
-	<flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
+	</sub-flow>
+	<sub-flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
 		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
 		<logger message="#[Java::invoke('java.util.TimeZone', 'getDisplayName()', server.timeZone, {})]" level="ERROR" doc:id="08eaf019-5884-44f3-ab14-05af5bac821d"/> 
@@ -347,8 +302,8 @@ output application/java
 		</ee:transform>
 		<avio-core:custom-logger doc:name="Log End" doc:id="07bb2003-fb21-4dab-affe-26b1661af2c5" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}"/>
-	</flow>
-	<flow name="app-stats-flow" doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348" > 
+	</sub-flow>
+	<sub-flow name="app-stats-flow" doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348" > 
 		<avio-core:custom-logger doc:name="Log Start" doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86" config-ref="AVIO_Core_Config" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
 		<ee:transform doc:name="Transform Message" doc:id="86bc16cb-7d4b-413a-b314-46c253b9cc4b" >
@@ -371,7 +326,7 @@ output application/java
 		</ee:transform>
 		<choice doc:name="Choice" doc:id="358eb889-b1d1-4d51-a05e-be10b59c16ae" >
 			<when expression='#[payload != ""]'>
-				<foreach doc:name="For Each" doc:id="2296ddab-5006-4be0-96b3-4ebc20af23e0" collection="#[payload]">
+				<foreach doc:name="iterate flows" doc:id="2296ddab-5006-4be0-96b3-4ebc20af23e0" collection="#[payload]">
 					<flow-ref name="#[payload]" doc:name="each app flows" doc:id="63817cd0-51b6-4344-8091-235a2c5102a3" target="result" targetValue="#[payload]"/>
 					<ee:transform doc:name="Reassign aggregator" doc:id="ab6247eb-335c-42a9-be0e-86b077f51cca">
 						<ee:variables >
@@ -416,23 +371,5 @@ output application/java
 		</choice>
 		<avio-core:custom-logger doc:name="Log End" doc:id="7f361100-f2cd-4c91-8e7a-050c297eb592" config-ref="AVIO_Core_Config" correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" />
 		
-	</flow>
-	<sub-flow name="error-handling-Sub_Flow" doc:id="6f08638d-8168-4d16-8896-b98c527925ba" >
-        <ee:transform doc:name="Prepare Exception Response" doc:id="721d6c71-9627-4e3d-8eb7-75a87bfa069a" >
-            <ee:message >
-                <ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	statusCode: vars.httpStatus,
-  	error: {
-  		"type": error.errorType.namespace ++ ":" ++ error.errorType.identifier,
-  		message: error.description default "Unhandled Exception"
-  	}
-}]]></ee:set-payload>
-            </ee:message>
-            <ee:variables >
-            </ee:variables>
-        </ee:transform>
-    </sub-flow>
+	</sub-flow>
 </mule>
