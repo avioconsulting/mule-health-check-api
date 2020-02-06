@@ -17,9 +17,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
                 <http:body><![CDATA[#[payload]]]></http:body>
             </http:error-response>
         </http:listener>
-        <set-variable variableName="correlation_id"
+        <set-variable value="#[now()]" doc:name="set timestamp" doc:id="01f5d3ae-b281-4c48-baf3-c453738f0839" variableName="startTime" />
+		<set-variable variableName="correlation_id"
 			value="#[message.attributes.guid default uuid()]" doc:name="set correlationId" />
-        <set-variable value="#[now()]" doc:name="set timestamp" doc:id="01f5d3ae-b281-4c48-baf3-c453738f0839" variableName="timestamp"/>
 		<apikit:router config-ref="health-check-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true">
@@ -79,7 +79,7 @@ vars.muleStats ++
 vars.runtimeStats ++ 
 vars.appStats.backendSystems ++
 {
-	"timestamp": now(),
+	"timestamp": vars.startTime,
 	"correlationId" : vars.correlation_id   
 }]]></ee:set-payload>
             </ee:message>
@@ -171,7 +171,7 @@ output application/json
 vars.muleStats ++
 vars.runtimeStats ++ 
 {
-	"timestamp": now(),
+	"timestamp": vars.startTime,
 	"correlationId" : vars.correlation_id   
 }]]></ee:set-payload>
             </ee:message>
@@ -203,7 +203,7 @@ output application/json
     </flow>
 	<sub-flow name="runtime-stats-flow" doc:id="996e0c0b-5b66-496c-b089-2bb4c8deaa03" >
 		<avio-core:custom-logger doc:name="Log Start" doc:id="ac6252c0-dd2a-46d4-9a8a-e483119257f8" config-ref="AVIO_Core_Config" 
-			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start processing request for Runtime Stats Flow"/>
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start processing request for Runtime Stats SubFlow"/>
 		<ee:transform doc:name="Retrive System Props" doc:id="c0ef994e-ed55-46a4-a1ae-e2ec200459ad">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -282,8 +282,7 @@ var jvmStats = payload
 	</sub-flow>
 	<sub-flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
 		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config" 
-			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
-		<logger message="#[Java::invoke('java.util.TimeZone', 'getDisplayName()', server.timeZone, {})]" level="ERROR" doc:id="08eaf019-5884-44f3-ab14-05af5bac821d"/> 
+			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing request for mule stats subflow"/> 
 		<ee:transform doc:name="Transform Message" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -292,16 +291,16 @@ output application/java
 { 
 	"muleRuntime" : mule.version,
 	"apiName" : p("app.name") default "",
-	"server" : server.host,
-	"url": attributes.scheme ++ '://'  ++ attributes.headers.host ++ attributes.rawRequestPath,
-	"ip" : server.ip,
-	"timeZone" : Java::invoke('java.util.TimeZone', 'getDisplayName()', server.timeZone, {}),
-	"environment": p('env') 
+	"server" : server.host default "",
+	"url": attributes.scheme ++ '://'  ++ attributes.headers.host ++ attributes.rawRequestPath default "",
+	"ip" : server.ip default "",
+	"timeZone" : Java::invoke('java.util.TimeZone', 'getDisplayName()', server.timeZone, {}) default "",
+	"environment": p('env') default ""
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<avio-core:custom-logger doc:name="Log End" doc:id="07bb2003-fb21-4dab-affe-26b1661af2c5" config-ref="AVIO_Core_Config" 
-			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}"/>
+			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing request for mule stats subflow"/>
 	</sub-flow>
 	<sub-flow name="app-stats-flow" doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348" > 
 		<avio-core:custom-logger doc:name="Log Start" doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86" config-ref="AVIO_Core_Config" 
@@ -327,7 +326,26 @@ output application/java
 		<choice doc:name="Choice" doc:id="358eb889-b1d1-4d51-a05e-be10b59c16ae" >
 			<when expression='#[payload != ""]'>
 				<foreach doc:name="iterate flows" doc:id="2296ddab-5006-4be0-96b3-4ebc20af23e0" collection="#[payload]">
-					<flow-ref name="#[payload]" doc:name="each app flows" doc:id="63817cd0-51b6-4344-8091-235a2c5102a3" target="result" targetValue="#[payload]"/>
+					<try doc:name="Try" doc:id="b6dd685f-5e12-417d-aed2-c60a7d1db2ed" >
+						<flow-ref name="#[payload]" doc:name="each app flows" doc:id="63817cd0-51b6-4344-8091-235a2c5102a3" target="result" targetValue="#[payload]" />
+						<error-handler >
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c68a966c-5ade-491b-977f-f64119233e5a" >
+								<ee:transform doc:name="Transform Message" doc:id="d82daa2c-a255-4a5d-a7a7-139a36d97cb4" >
+									<ee:variables >
+										<ee:set-variable variableName="result" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	systemName: payload,
+	status: "UNKNOWN",
+	exception: "No flow named " ++ payload ++ " found.",
+	timeStamp : vars.startTime
+}]]></ee:set-variable>
+									</ee:variables>
+								</ee:transform>
+							</on-error-continue>
+						</error-handler>
+					</try>
 					<ee:transform doc:name="Reassign aggregator" doc:id="ab6247eb-335c-42a9-be0e-86b077f51cca">
 						<ee:variables >
 							<ee:set-variable variableName="aggregator" ><![CDATA[%dw 2.0
