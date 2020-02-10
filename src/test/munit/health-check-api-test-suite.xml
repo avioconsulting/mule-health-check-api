@@ -77,4 +77,72 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<munit-tools:assert-that doc:name="Assert payload not null" doc:id="cddaff76-4524-47c8-b6a1-4ca0c73b9663" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
 		</munit:validation>
 	</munit:test>
+	<munit:test name="overall-health-exception-handling-test" expectedErrorType="ANY">
+    <munit:behavior >
+        <munit-tools:mock-when processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="acc32800-adc6-4653-a257-c5a6a3ce70ff" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+        </munit-tools:mock-when>
+    </munit:behavior>
+    <munit:execution >
+        <flow-ref name="get:\health:health-check-api-config" doc:name="call /health"/>
+    </munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="9585949a-2ae5-4e99-a3c9-e8547ab5cdcb" processor="on-error-propagate">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="true" attributeName="logException" />
+					<munit-tools:with-attribute whereValue="On Error Propagate" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+    </munit:validation>
+</munit:test>
+<munit:test name="runtime-health-exception-handling-test" expectedErrorType="ANY">
+    <munit:behavior >
+        <munit-tools:mock-when processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="5fb31361-4922-401f-889f-ca7f9f74186e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+        </munit-tools:mock-when>
+    </munit:behavior>
+    <munit:execution >
+        <flow-ref name="get:\health\runtime:health-check-api-config" doc:name="call /health/runtime"/>
+    </munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="84738abd-847c-4944-a59b-e778ae8dd4e9" processor="on-error-propagate">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="31c81402-9815-419f-8180-a93056682833" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+    </munit:validation>
+</munit:test>
+<munit:test name="app-health-exception-handling-test" expectedErrorType="ANY">
+    <munit:behavior >
+        <munit-tools:mock-when processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="10e607d8-6781-4893-993b-c278272e11cf" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+        </munit-tools:mock-when>
+    </munit:behavior>
+    <munit:execution >
+        <flow-ref name="get:\health\app:health-check-api-config" doc:name="call /health/app"/>
+    </munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="2a279e48-6d6e-4e01-b2ce-7c836b5713d8" processor="on-error-propagate">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="On Error Propagate" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="6de6a774-13a6-4bd7-b1a0-9230c6e25b7c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+    </munit:validation>
+</munit:test>
 </mule>
