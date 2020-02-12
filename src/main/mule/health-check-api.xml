@@ -6,7 +6,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
     <apikit:config name="health-check-api-config" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" raml="api/health-check-api.raml"/>
     <configuration-properties doc:name="Configuration properties" doc:id="88c27769-b67c-45e0-9b67-de406d4db851" file="health-check-api.properties" />
-	<avio-core:config name="AVIO_Core_Config" doc:name="AVIO Core Config" doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb" app_version="${health.app.version}" app_name="${health.app.name}"/>
+	<avio-core:config name="AVIO_Core_Config_Health" doc:name="AVIO Core Config" doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb" app_version="${health.app.version}" app_name="${health.app.name}"/>
 	
 	<flow name="health-check-api-main">
         <http:listener config-ref="${healthcheck.https.configuration.reference}" path="/monitor/*">
@@ -57,7 +57,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\health:health-check-api-config">
-    	<avio-core:custom-logger doc:name="Log Start" doc:id="836ce6e0-a87d-4835-8859-99be0347f475" config-ref="AVIO_Core_Config" 
+    	<avio-core:custom-logger doc:name="Log Start" doc:id="836ce6e0-a87d-4835-8859-99be0347f475" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for Health Check"/>
 		<flow-ref doc:name="mule-stats-flow" doc:id="acc32800-adc6-4653-a257-c5a6a3ce70ff" name="mule-stats-flow" target="muleStats" targetValue="#[payload]"/>
 		<flow-ref doc:name="runtime-stats-flow" doc:id="808e14da-bf02-4995-8967-8ffbdb2e4b7c" name="runtime-stats-flow" target="runtimeStats" targetValue="#[payload]"/>
@@ -84,7 +84,7 @@ vars.appStats.backendSystems ++
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-        <avio-core:custom-logger doc:name="Log End" doc:id="bf64762d-25eb-4b8f-af0f-a16a59140060" config-ref="AVIO_Core_Config" 
+        <avio-core:custom-logger doc:name="Log End" doc:id="bf64762d-25eb-4b8f-af0f-a16a59140060" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for Health Check"/>
         <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7ee8a3b1-8b74-4d6f-bef6-142ebfc867fb" >
@@ -110,7 +110,7 @@ output application/json
 		</error-handler>
     </flow>
 	<flow name="get:\health\app:health-check-api-config">
-		<avio-core:custom-logger doc:name="Log Start" doc:id="1c925648-91a3-4b79-a6e6-84f5b27a4c1e" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log Start" doc:id="1c925648-91a3-4b79-a6e6-84f5b27a4c1e" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for App health Check"/>
         <flow-ref doc:name="mule-stats-flow" doc:id="a8ab7419-a80c-45b4-b9b8-74fb58cf12f9" name="mule-stats-flow" target="muleStats" targetValue="#[payload]"/>
 		<flow-ref doc:name="app-stats-flow" doc:id="10e607d8-6781-4893-993b-c278272e11cf" name="app-stats-flow" target="appStats" targetValue="#[payload]"/>
@@ -132,7 +132,7 @@ vars.appStats.backendSystems
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<avio-core:custom-logger doc:name="Log End" doc:id="5249e6ff-ba3b-4b40-abef-a9e8f9e9acd3" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log End" doc:id="5249e6ff-ba3b-4b40-abef-a9e8f9e9acd3" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for App health Check"/>
     <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6de6a774-13a6-4bd7-b1a0-9230c6e25b7c" >
@@ -158,7 +158,7 @@ output application/json
 		</error-handler>
     </flow>
     <flow name="get:\health\runtime:health-check-api-config">
-		<avio-core:custom-logger doc:name="Log Start" doc:id="ad4e7aeb-37ad-45f6-b9eb-aa14ae57224f" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log Start" doc:id="ad4e7aeb-37ad-45f6-b9eb-aa14ae57224f" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing Request for Runtime health Check"/>
         <flow-ref doc:name="mule-stats-flow" doc:id="5fb31361-4922-401f-889f-ca7f9f74186e" name="mule-stats-flow" target="muleStats" targetValue="#[payload]"/>
         <flow-ref doc:name="runtime-stats-flow" doc:id="07857409-fff3-4df3-9479-1f1cb4e03e7a" name="runtime-stats-flow" target="runtimeStats" targetValue="#[payload]"/>
@@ -176,7 +176,7 @@ vars.runtimeStats ++
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-        <avio-core:custom-logger doc:name="Log End" doc:id="ef231900-7364-48c2-a156-605f3d99fc08" config-ref="AVIO_Core_Config" 
+        <avio-core:custom-logger doc:name="Log End" doc:id="ef231900-7364-48c2-a156-605f3d99fc08" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for Runtime health Check"/>
         <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="31c81402-9815-419f-8180-a93056682833" >
@@ -202,7 +202,7 @@ output application/json
 		</error-handler>
     </flow>
 	<sub-flow name="runtime-stats-flow" doc:id="996e0c0b-5b66-496c-b089-2bb4c8deaa03" >
-		<avio-core:custom-logger doc:name="Log Start" doc:id="ac6252c0-dd2a-46d4-9a8a-e483119257f8" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log Start" doc:id="ac6252c0-dd2a-46d4-9a8a-e483119257f8" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start processing request for Runtime Stats SubFlow"/>
 		<ee:transform doc:name="Retrive System Props" doc:id="c0ef994e-ed55-46a4-a1ae-e2ec200459ad">
 			<ee:message>
@@ -277,11 +277,11 @@ var jvmStats = payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<avio-core:custom-logger doc:name="Log End" doc:id="14df32f4-b433-4b28-bacf-354697c8b016" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log End" doc:id="14df32f4-b433-4b28-bacf-354697c8b016" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed processing request for Runtime Stats Flow"/>
 	</sub-flow>
 	<sub-flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
-		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing request for mule stats subflow"/> 
 		<ee:transform doc:name="Transform Message" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd">
 			<ee:message>
@@ -299,11 +299,11 @@ output application/java
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<avio-core:custom-logger doc:name="Log End" doc:id="07bb2003-fb21-4dab-affe-26b1661af2c5" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log End" doc:id="07bb2003-fb21-4dab-affe-26b1661af2c5" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing request for mule stats subflow"/>
 	</sub-flow>
 	<sub-flow name="app-stats-flow" doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348" > 
-		<avio-core:custom-logger doc:name="Log Start" doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86" config-ref="AVIO_Core_Config" 
+		<avio-core:custom-logger doc:name="Log Start" doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlation_id]" tracePoint="START" category="${log.healthcheck.category}"/>
 		<ee:transform doc:name="Transform Message" doc:id="86bc16cb-7d4b-413a-b314-46c253b9cc4b" >
 			<ee:message >
@@ -387,7 +387,7 @@ output application/java
 				</ee:transform>
 			</otherwise>
 		</choice>
-		<avio-core:custom-logger doc:name="Log End" doc:id="7f361100-f2cd-4c91-8e7a-050c297eb592" config-ref="AVIO_Core_Config" correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" />
+		<avio-core:custom-logger doc:name="Log End" doc:id="7f361100-f2cd-4c91-8e7a-050c297eb592" config-ref="AVIO_Core_Config_Health" correlation_id="#[vars.correlation_id]" tracePoint="END" category="${log.healthcheck.category}" />
 		
 	</sub-flow>
 </mule>
