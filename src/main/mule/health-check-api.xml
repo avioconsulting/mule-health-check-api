@@ -329,7 +329,7 @@ output application/java
 					<try doc:name="Try" doc:id="b6dd685f-5e12-417d-aed2-c60a7d1db2ed" >
 						<flow-ref name="#[payload]" doc:name="each app flows" doc:id="63817cd0-51b6-4344-8091-235a2c5102a3" target="result" targetValue="#[payload]" />
 						<error-handler >
-							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c68a966c-5ade-491b-977f-f64119233e5a" >
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c68a966c-5ade-491b-977f-f64119233e5a" type="ANY">
 								<ee:transform doc:name="Transform Message" doc:id="d82daa2c-a255-4a5d-a7a7-139a36d97cb4" >
 									<ee:variables >
 										<ee:set-variable variableName="result" ><![CDATA[%dw 2.0
@@ -338,7 +338,7 @@ output application/java
 {
 	systemName: payload,
 	status: "UNKNOWN",
-	exception: "No flow named " ++ payload ++ " found.",
+	exception: "Error when calling " ++ payload ++ ". Please check logs for details. ",
 	timeStamp : vars.startTime
 }]]></ee:set-variable>
 									</ee:variables>
