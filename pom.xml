@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.avioconsulting</groupId>
     <artifactId>health-check-api-mule4</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>mule-application</packaging>
     <name>health-check-api-mule4</name>
     <properties>
@@ -162,4 +162,16 @@
             </url>
         </pluginRepository>
     </pluginRepositories>
+    	<distributionManagement>
+		<repository>
+			<id>avio-releases</id>
+			<name>avio-releases</name>
+			<url>https://devops.avioconsulting.com/nexus/repository/avio-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>avio-snapshots</id>
+			<name>avio-snapshots</name>
+			<url>https://devops.avioconsulting.com/nexus/repository/avio-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
