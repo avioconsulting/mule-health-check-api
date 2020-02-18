@@ -7,7 +7,6 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
     <apikit:config name="health-check-api-config" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" raml="api/health-check-api.raml"/>
     <configuration-properties doc:name="Configuration properties" doc:id="88c27769-b67c-45e0-9b67-de406d4db851" file="health-check-api.properties" />
-	<api-gateway:autodiscovery apiId="${healthcheck.apiId}" doc:name="API Autodiscovery" doc:id="79199094-1909-47e3-b1b1-384158a9bbd6" flowRef="health-check-api-main" />
 	<avio-core:config name="AVIO_Core_Config_Health" doc:name="AVIO Core Config" doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb" app_version="${health.app.version}" app_name="${health.app.name}"/>
 	<flow name="health-check-api-main">
         <http:listener config-ref="${healthcheck.https.configuration.reference}" path="/monitor/*">
