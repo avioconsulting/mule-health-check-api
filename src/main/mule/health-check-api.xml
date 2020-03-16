@@ -232,7 +232,7 @@ output application/java
 		<java:invoke doc:name="Invoke object method" doc:id="19ae4695-85cb-4156-9692-f783a5dd4bdd" 
 			instance="#[vars.JVMStats]" class="com.avio.monitoring.JVMStats" method="getJVMStats()">
 		</java:invoke>
-		<ee:transform doc:name="Transform Message" doc:id="81a314d4-0cc0-4039-9fd0-00653c6c0281" >
+		<ee:transform doc:name="Build jvm stats response" doc:id="81a314d4-0cc0-4039-9fd0-00653c6c0281" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
@@ -291,7 +291,7 @@ var jvmStats = payload
 	<sub-flow name="mule-stats-flow" doc:id="086abf27-18c3-4db2-a5ea-d5db1865226c" >
 		<avio-core:custom-logger doc:name="Log Start" doc:id="18a28869-f808-443e-8041-3a8d30bda09f" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlationId]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing request for mule stats subflow"/> 
-		<ee:transform doc:name="Transform Message" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd">
+		<ee:transform doc:name="Build mule stats response" doc:id="5b318340-74ef-40a7-babc-5bc176e62bfd">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/java
@@ -313,7 +313,7 @@ output application/java
 	<sub-flow name="app-stats-flow" doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348" > 
 		<avio-core:custom-logger doc:name="Log Start" doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86" config-ref="AVIO_Core_Config_Health" 
 			correlation_id="#[vars.correlationId]" tracePoint="START" category="${log.healthcheck.category}" message="Start Processing request for app-stats-flows"/>
-		<ee:transform doc:name="Transform Message" doc:id="86bc16cb-7d4b-413a-b314-46c253b9cc4b" >
+		<ee:transform doc:name="split by flowname" doc:id="86bc16cb-7d4b-413a-b314-46c253b9cc4b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
@@ -338,7 +338,7 @@ output application/java
 						<flow-ref name="#[payload]" doc:name="each app flows" doc:id="63817cd0-51b6-4344-8091-235a2c5102a3" target="result" targetValue="#[payload]" />
 						<error-handler >
 							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c68a966c-5ade-491b-977f-f64119233e5a" type="ANY">
-								<ee:transform doc:name="Transform Message" doc:id="d82daa2c-a255-4a5d-a7a7-139a36d97cb4" >
+								<ee:transform doc:name="set each system call failed exception" doc:id="d82daa2c-a255-4a5d-a7a7-139a36d97cb4" >
 									<ee:variables >
 										<ee:set-variable variableName="result" ><![CDATA[%dw 2.0
 output application/java
