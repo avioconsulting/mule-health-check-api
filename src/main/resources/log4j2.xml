@@ -27,7 +27,7 @@
         <AsyncLogger name="org.mule" level="INFO"/>
         <AsyncLogger name="com.mulesoft" level="INFO"/>
         <AsyncLogger name="avio.api.debug" level="DEBUG" />
- 		<AsyncLogger name="com.avioconsulting.healthcheck" level="DEBUG" />
+ 		<AsyncLogger name="${log.healthcheck.category}" level="DEBUG" />
         <AsyncRoot level="INFO">
             <AppenderRef ref="file" />
         </AsyncRoot>
