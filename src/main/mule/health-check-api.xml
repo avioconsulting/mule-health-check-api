@@ -89,7 +89,7 @@ vars.appStats.backendSystems ++
         <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7ee8a3b1-8b74-4d6f-bef6-142ebfc867fb" >
 				<avio-core:custom-logger doc:name="Log Error" doc:id="664fb776-a27b-43d6-a499-e5421168e29d" config-ref="AVIO_Core_Config_Health" 
-			correlation_id="#[vars.correlationId]" tracePoint="EXCEPTION" category="${log.healthcheck.category}" message="Error Processing Request for /health endpoint" level="ERROR"/>
+			correlation_id="#[vars.correlationId]" tracePoint="EXCEPTION" category="${log.healthcheck.category}" message="Error Processing Request for overall health endpoint" level="ERROR" payload='#[write(payload,"application/json")]' status_code="500" type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]' detail="#[error.detailedDescription]"/>
 		
 				<ee:transform doc:name="Set Http Status" doc:id="186b9614-87e4-4c31-8994-3ec980889042">
 					<ee:variables>
@@ -139,8 +139,8 @@ vars.appStats.backendSystems
 			correlation_id="#[vars.correlationId]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for health/app health Check endpoint"/>
     <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6de6a774-13a6-4bd7-b1a0-9230c6e25b7c" >
-				<avio-core:custom-logger doc:name="Log Error" doc:id="f7800568-04eb-4744-8b88-1338de51d957" config-ref="AVIO_Core_Config_Health" 
-			correlation_id="#[vars.correlationId]" tracePoint="EXCEPTION" category="${log.healthcheck.category}" message="Error Processing Request for health/app endpoint" level="ERROR"/>
+				<avio-core:custom-logger doc:name="Log Error" doc:id="0320d587-4c5c-410a-b9ee-d5136533f269" config-ref="AVIO_Core_Config_Health" 
+			correlation_id="#[vars.correlationId]" tracePoint="EXCEPTION" category="${log.healthcheck.category}" message="Error Processing Request for health app endpoint" level="ERROR" payload='#[write(payload,"application/json")]' status_code="500" type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]' detail="#[error.detailedDescription]"/>
 		
 				<ee:transform doc:name="Set Http Status" doc:id="27e3853a-d3f5-4d92-b078-21d9a13244c0">
 					<ee:variables>
@@ -186,9 +186,9 @@ vars.runtimeStats ++
 			correlation_id="#[vars.correlationId]" tracePoint="END" category="${log.healthcheck.category}" message="Completed Processing Request for  /health/runtime health Check endpoint"/>
         <error-handler>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="31c81402-9815-419f-8180-a93056682833" >
-				<avio-core:custom-logger doc:name="Log Error" doc:id="d980510f-32cc-4d77-bb20-ac5ee651a429" config-ref="AVIO_Core_Config_Health" 
-			correlation_id="#[vars.correlationId]" tracePoint="EXCEPTION" category="${log.healthcheck.category}" message="Error Processing Request for health/runtime endpoint" level="ERROR"/>
-				<ee:transform doc:name="Set Http Status" doc:id="b1456f29-e933-4a81-a197-e3c255e1e2e0">
+				<avio-core:custom-logger doc:name="Log Error" doc:id="875678be-d6eb-4679-ae05-ff815ab40f96" config-ref="AVIO_Core_Config_Health" 
+			correlation_id="#[vars.correlationId]" tracePoint="EXCEPTION" category="${log.healthcheck.category}" message="Error Processing Request for health runtime endpoint" level="ERROR" payload='#[write(payload,"application/json")]' status_code="500" type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]' detail="#[error.detailedDescription]"/>
+			<ee:transform doc:name="Set Http Status" doc:id="b1456f29-e933-4a81-a197-e3c255e1e2e0">
 					<ee:variables>
 						<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
 output application/java
@@ -229,7 +229,7 @@ output application/java
 			</ee:message>
 		</ee:transform>
 		<java:new doc:name="Instantiate JVMStats class" doc:id="fb783f05-df56-4b92-bb5a-e8f30eadf8e7" class="com.avio.monitoring.JVMStats" constructor="JVMStats()" target="JVMStats"/>
-		<java:invoke doc:name="Invoke object method" doc:id="19ae4695-85cb-4156-9692-f783a5dd4bdd" 
+		<java:invoke doc:name="Invoke getJVMStats()" doc:id="19ae4695-85cb-4156-9692-f783a5dd4bdd" 
 			instance="#[vars.JVMStats]" class="com.avio.monitoring.JVMStats" method="getJVMStats()">
 		</java:invoke>
 		<ee:transform doc:name="Build jvm stats response" doc:id="81a314d4-0cc0-4039-9fd0-00653c6c0281" >
