@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="health-check-api-test-suite.xml" />
+	<munit:test name="mule-stats-flow-test" doc:id="8ca1a5af-576c-48bc-a208-44247a721098" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="call mule-stats-flow" doc:id="bbdc8ede-1b33-405b-9323-d94ee5975b66" name="mule-stats-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert payload not null" doc:id="5df63bba-035f-40ba-87de-6204b22e5f56" expression="#[payload.muleRuntime]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('muleRuntime')]" doc:name="validate key muleRuntime"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('apiName')]" doc:name="validate key apiName"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('server')]" doc:name="validate key server"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('url')]" doc:name="validate key url"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('ip')]" doc:name="validate key ip"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('timeZone')]" doc:name="validate key timeZone"/>
+			<munit-tools:assert-that expression="#[payload]" is="#[MunitTools::hasKey('environment')]" doc:name="validate key env"/>
+		</munit:validation>
+	</munit:test>
+		<munit:test name="health-check-test" doc:id="c9521b1d-f3ef-4045-b3ba-7a1991f12607" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when mule stats flow" doc:id="24384758-dc14-4861-8ada-68ee01b509ae" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mule-stats-flow" attributeName="name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://sample_data/mule-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="muleStats" value="#[readUrl('classpath://sample_data/mule-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when runtime-stats" doc:id="fe1b3bdc-296f-4fba-886d-088365bc98d0" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="runtime-stats-flow" attributeName="name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://sample_data/runtime-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="runtimeStats" value="#[readUrl('classpath://sample_data/runtime-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when app-stats" doc:id="fe2faed0-8911-49c7-91d7-247dc2976226" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="app-stats-flow" attributeName="name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://sample_data/app-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="appStats" value="#[readUrl('classpath://sample_data/app-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<!-- <munit:set-event doc:name="Set variables" doc:id="7c0a324f-ad21-4db5-ad38-36d03d373a50" >
+				<munit:variables >
+					<munit:variable key="muleStats" value="#['{&quot;muleRuntime&quot; : &quot;1.0&quot;}']" mediaType="text/json" />
+					<munit:variable key="appStats.backendSystems" value="#['{&quot;jvmProperties&quot; : {&quot;processId&quot;: &quot;test&quot; }}']" mediaType="application/json" />
+					<munit:variable key="runtimeStats" value="#['{&quot;systemStatus&quot; : 200}']" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event> -->
+			<flow-ref doc:name="call get:\health:health-check-api-config" doc:id="a1f119c5-3b38-4dfc-b2cd-9ba8e0fc808b" name="get:\health:health-check-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert payload not null" doc:id="4510f4e5-5f36-4ef1-b301-ea7ff20feea3" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Payload is null"/>
+			<munit-tools:assert-that expression="#[output application/json ---payload.muleRuntime]" is="#[MunitTools::equalTo('4.2.2')]" message="The response payload is incorrect!" doc:name="Assert That - Payload is Expected" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="overall-health-exception-handling-test">
+    <munit:behavior >
+        <munit-tools:mock-when processor="flow-ref" doc:name="throw error when mule-stats-flow">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mule-stats-flow" attributeName="name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+        </munit-tools:mock-when>
+    </munit:behavior>
+    <munit:execution >
+    		<try>
+        <flow-ref name="get:\health:health-check-api-config" doc:name="call /health"/>
+        <error-handler >
+                <on-error-continue type="ANY" enableNotifications="true" logException="true">
+					</on-error-continue>
+            </error-handler>
+        </try>
+    </munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert http 500" doc:id="a869a240-5b64-43ee-9e9c-cff0b0d8aec4" expression='#[write(vars.httpStatus, "text/plain")]' is="#[MunitTools::equalTo('500')]" message="The httpStatus is not correct"/>
+			<munit-tools:assert-that doc:name="Assert payload string" doc:id="5d936e8a-61e7-462d-95c8-10805a7ed1db" expression="#[payload.message]" is="#[MunitTools::containsString('error getting the health stats')]" message="Error String doesnt match"/>
+		</munit:validation>
+</munit:test>
+</mule>

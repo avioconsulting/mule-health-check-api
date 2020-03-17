@@ -1,0 +1,9 @@
+{
+  "muleRuntime": "4.2.2",
+  "apiName": "health-check-api-mule4",
+  "server": "ac0078",
+  "url": "",
+  "ip": "192.168.1.81",
+  "timeZone": "Central Standard Time",
+  "environment": "dev"
+ }
