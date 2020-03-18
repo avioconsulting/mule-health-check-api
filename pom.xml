@@ -74,6 +74,8 @@
                         <runCoverage>true</runCoverage>
                         <formats>
                             <format>html</format>
+                            <format>console</format>
+                            <format>json</format>
                         </formats>
                     </coverage>
                 </configuration>
