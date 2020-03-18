@@ -65,7 +65,7 @@
 			<flow-ref doc:name="call app-stats-flow" doc:id="463a5a00-e625-42de-a16c-9021f868aa75" name="app-stats-flow"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert system status 200" doc:id="89646e55-a801-4002-aa14-5ef2abd61162" expression="#[write(payload.systemStatus, 'text/plain')]" is="#[MunitTools::equalTo('500')]" message="System Status not 500"/>
+			<munit-tools:assert-that doc:name="Assert system status 500" doc:id="89646e55-a801-4002-aa14-5ef2abd61162" expression="#[write(payload.systemStatus, 'text/plain')]" is="#[MunitTools::equalTo('500')]" message="System Status not 500"/>
 			<munit-tools:assert-that doc:name="Assert total backend systems" doc:id="f22280a8-5d21-4b63-a267-a8de33f9d66b" expression="#[write(payload.backendSystems.systems[0].status, 'text/plain')]" is='#[MunitTools::containsString("UNKNOWN")]' message="system status should be ENUM unknown" />
 		
 		</munit:validation>

@@ -49,7 +49,7 @@
 			</munit-tools:mock-when>
 		</munit:behavior>
 		<munit:execution>
-			<flow-ref doc:name="call get:\health\app:health-check-api-config"
+			<flow-ref doc:name="call get:\health\runtime:health-check-api-config"
 				doc:id="c3d4fb01-2d05-415c-a5f1-e3eb1635a053" name="get:\health\runtime:health-check-api-config" />
 		</munit:execution>
 		<munit:validation>
