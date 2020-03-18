@@ -1,72 +1,72 @@
 {
-  "muleRuntime": "4.2.2",
-  "apiName": "health-check-api-mule4",
-  "server": "ac0078",
-  "url": "",
-  "ip": "192.168.1.81",
-  "timeZone": "Central Standard Time",
-  "environment": "dev",
-  "jvmProperties": {
-    "pid": "34978@AC0078",
-    "vmName": "Java HotSpot(TM) 64-Bit Server VM",
-    "vmVendor": "Oracle Corporation",
-    "vmVersion": "1.8.0_221",
-    "locale": "English (United States)",
-    "memory": {
-      "heapMemoryUsage": {
-        "init": 268435456,
-        "used": 558240168,
-        "committed": 1459093504,
-        "max": 3817865216
-      },
-      "nonHeapMemoryUsage": {
-        "init": 2555904,
-        "used": 174068792,
-        "committed": 190001152,
-        "max": -1
-      }
-    },
-    "threadCount": {
-      "activeThreadCount": 118,
-      "daemonThreadCount": 23
-    },
-    "garbageCollection": [
-      {
-        "gcName": "PS Scavenge",
-        "collectionCount": 13,
-        "collectionTime": 134
-      },
-      {
-        "gcName": "PS MarkSweep",
-        "collectionCount": 4,
-        "collectionTime": 343
-      }
-    ]
-  },
-  "osProperties": {
-    "osName": "Mac OS X",
-    "osVersion": "10.14.6",
-    "osArchitechture": "x86_64",
-    "systemLoadAverage": 2.33349609375,
-    "availableProcessors": 16,
-    "freePhysicalMemorySize": 806207488,
-    "processCpuTime": 62369911000,
-    "systemCpuLoad": 0,
-    "processCpuLoad": 0
-  },
-  "systems": [
-    {
-      "systemName": "testflow1",
-      "status": "OK",
-      "timeStamp": "2020-03-17T11:09:57.593-05:00"
-    },
-    {
-      "systemName": "testflow2",
-      "status": "ERROR",
-      "exception": "Error when calling testflow2. Please check logs for details. ",
-      "timeStamp": "2020-03-17T11:10:01.978-05:00"
-    }
-  ],
-  "timestamp": "2020-03-17T12:45:45.41-05:00",
-  "correlation_id": null
+	"muleRuntime": "4.2.2",
+	"apiName": "health-check-api-mule4",
+	"server": "ac0078",
+	"url": "",
+	"ip": "192.168.1.81",
+	"timeZone": "Central Standard Time",
+	"environment": "dev",
+	"jvmProperties": {
+		"pid": "34978@AC0078",
+		"vmName": "Java HotSpot(TM) 64-Bit Server VM",
+		"vmVendor": "Oracle Corporation",
+		"vmVersion": "1.8.0_221",
+		"locale": "English (United States)",
+		"memory": {
+			"heapMemoryUsage": {
+				"init": 268435456,
+				"used": 558240168,
+				"committed": 1459093504,
+				"max": 3817865216
+			},
+			"nonHeapMemoryUsage": {
+				"init": 2555904,
+				"used": 174068792,
+				"committed": 190001152,
+				"max": -1
+			}
+		},
+		"threadCount": {
+			"activeThreadCount": 118,
+			"daemonThreadCount": 23
+		},
+		"garbageCollection": [
+			{
+				"gcName": "PS Scavenge",
+				"collectionCount": 13,
+				"collectionTime": 134
+			},
+			{
+				"gcName": "PS MarkSweep",
+				"collectionCount": 4,
+				"collectionTime": 343
+			}
+		]
+	},
+	"osProperties": {
+		"osName": "Mac OS X",
+		"osVersion": "10.14.6",
+		"osArchitechture": "x86_64",
+		"systemLoadAverage": 2.33349609375,
+		"availableProcessors": 16,
+		"freePhysicalMemorySize": 806207488,
+		"processCpuTime": 62369911000,
+		"systemCpuLoad": 0,
+		"processCpuLoad": 0
+	},
+	"systems": [
+		{
+			"systemName": "testflow1",
+			"status": "OK",
+			"timeStamp": "2020-03-17T11:09:57.593-05:00"
+		},
+		{
+			"systemName": "testflow2",
+			"status": "ERROR",
+			"exception": "Error when calling testflow2. Please check logs for details. ",
+			"timeStamp": "2020-03-17T11:10:01.978-05:00"
+		}
+	],
+	"timestamp": "2020-03-17T12:45:45.41-05:00",
+	"correlation_id": "123"
 }

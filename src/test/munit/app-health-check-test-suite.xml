@@ -7,25 +7,59 @@
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
-	<munit:config name="health-check-api-test-suite.xml" />
-		<munit:test name="no-implementation-app-flow-test" doc:id="d6a37ce5-1ac9-464f-b864-a85d7b36e113">
+	<munit:config name="app-health-check-api-test-suite.xml" />
+		<munit:test name="no-dependency-app-flow-test" doc:id="d6a37ce5-1ac9-464f-b864-a85d7b36e113">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when no app dependency" doc:id="bdb72cce-b49a-462d-b819-61b7575fd79e" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="get-app-dependency-subflow" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[""]' mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
 		<munit:execution >
 			<flow-ref doc:name="call app-stats-flow" doc:id="255ccda9-ece9-4b39-9576-51bbf5d134db" name="app-stats-flow"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert system status" doc:id="c96a9276-b63f-4191-ae11-9a48f20b0545" expression="#[write(payload.systemStatus, 'text/plain')]" is="#[MunitTools::equalTo('500')]" message="System Status not 500"/>
+			<munit-tools:assert-that doc:name="Assert system status 200" doc:id="c96a9276-b63f-4191-ae11-9a48f20b0545" expression="#[write(payload.systemStatus, 'text/plain')]" is="#[MunitTools::equalTo('200')]" message="System Status not 200"/>
+			<munit-tools:assert-that doc:name="Assert empty systems" doc:id="906eea06-e8b9-4738-b2d4-720a65e56371" expression="#[write(sizeOf(payload.backendSystems.systems), 'text/plain')]" is="#[MunitTools::equalTo('0')]" message="One or more Systems !"/>
+
 		</munit:validation>
 	</munit:test>
-	<munit:test name="health-check-app-test" doc:id="ea690a5b-c6b0-491f-aa49-445a6afc4ca5" description="Test" ignore="true">
+		<munit:test name="with-app-dependency-flow-test" doc:id="421fa6b7-c8a8-4b3b-b904-5fcef97f94e8">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when flow called" doc:id="f463fe5e-0867-41c0-a43a-ebff08c8352c" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="each app flows" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="result" value="#[readUrl('classpath://sample_data/flow-response.json')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="call app-stats-flow" doc:id="5e12b67a-90ce-4141-a62e-a38f41cce848" name="app-stats-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert system status 200" doc:id="bca76c90-cf90-46b6-bfbd-8a02715ab349" expression="#[write(payload.systemStatus, 'text/plain')]" is="#[MunitTools::equalTo('200')]" message="System Status not 200"/>
+			<munit-tools:assert-that doc:name="Assert total backend systems" doc:id="ebc61da0-be72-4a48-8184-97dcc7cfedf2" expression="#[write(sizeOf(payload.backendSystems.systems), 'text/plain')]" is="#[MunitTools::equalTo('2')]" message="System Status not 200"/>
+		
+		</munit:validation>
+	</munit:test>
+	<munit:test name="health-check-app-test" doc:id="ea690a5b-c6b0-491f-aa49-445a6afc4ca5" description="Test">
 		<munit:behavior >
 			<munit-tools:mock-when doc:name="Mock when mule stats flow" doc:id="7616921e-be2d-4a76-852b-b24c15391169" processor="flow-ref">
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute whereValue="mule-stats-flow" attributeName="doc:name" />
 				</munit-tools:with-attributes>
 				<munit-tools:then-return >
-					<munit-tools:payload value="#[readUrl('classpath://sample_data/mule-stats-response.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:payload value="#[readUrl('classpath://sample_data/mule-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
 					<munit-tools:variables >
-						<munit-tools:variable key="muleStats" value="#[readUrl('classpath://sample_data/mule-stats-response.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="muleStats" value="#[readUrl('classpath://sample_data/mule-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
 					</munit-tools:variables>
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
@@ -34,30 +68,25 @@
 					<munit-tools:with-attribute whereValue="app-stats-flow" attributeName="doc:name" />
 				</munit-tools:with-attributes>
 				<munit-tools:then-return >
-					<munit-tools:payload value="#[readUrl('classpath://sample_data/app-stats-response.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:payload value="#[readUrl('classpath://sample_data/app-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
 					<munit-tools:variables >
-						<munit-tools:variable key="runtimeStats" value="#[readUrl('classpath://sample_data/runtime-stats-response.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="appStats" value="#[readUrl('classpath://sample_data/app-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
 					</munit-tools:variables>
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
 		<munit:execution >
-		<!--	<munit:set-event doc:name="Set variables" doc:id="7c02779c-e191-45ea-b65f-3b74c0f5cc0a" >
-				  <munit:variables >
-					<munit:variable key="muleStats" value="#['{&quot;muleRuntime&quot; : &quot;1.0&quot;}']" mediaType="text/json" />
-						<munit:variable key="appStats.backendSystems" value="#['{&quot;jvmProperties&quot; : {&quot;processId&quot;: &quot;test&quot; }}']" mediaType="application/json" />
-				</munit:variables>
-				
-			</munit:set-event>-->
 			<flow-ref doc:name="call get:\health\app:health-check-api-config" doc:id="a950893b-2c3d-4b15-b07d-3a1d58c64ada" name="get:\health\app:health-check-api-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert payload not null" doc:id="85e17371-d281-44a5-8128-b078b4a2efdd" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="payload is null"/>
+			<munit-tools:assert-that doc:name="Assert payload not null" doc:id="85e17371-d281-44a5-8128-b078b4a2efdd" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Payload is null !"/>
+			<munit-tools:assert-that expression="#[output application/json --- payload.muleRuntime]" is="#[MunitTools::equalTo('4.2.2')]" message="The response payload is incorrect!" doc:name="Assert That - mule properties" />
+			<munit-tools:assert-that expression='#[output application/json --- write(sizeOf(payload.systems), "text/plain")]' is="#[MunitTools::equalTo('2')]" message="The response payload is incorrect!" doc:name="Assert That - total backend system" />
 		</munit:validation>
 	</munit:test>
 	<munit:test name="app-health-exception-handling-test">
     <munit:behavior >
-        <munit-tools:mock-when processor="flow-ref">
+        <munit-tools:mock-when processor="flow-ref" doc:name="Mock when throw error">
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute whereValue="app-stats-flow" attributeName="doc:name" />
 				</munit-tools:with-attributes>

@@ -7,7 +7,7 @@
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
-	<munit:config name="health-check-api-test-suite.xml" />
+	<munit:config name="overall-health-check-test-suite.xml" />
 	<munit:test name="mule-stats-flow-test" doc:id="8ca1a5af-576c-48bc-a208-44247a721098" description="Test">
 		<munit:execution >
 			<flow-ref doc:name="call mule-stats-flow" doc:id="bbdc8ede-1b33-405b-9323-d94ee5975b66" name="mule-stats-flow"/>
@@ -59,19 +59,15 @@
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
-		<munit:execution >
-			<!-- <munit:set-event doc:name="Set variables" doc:id="7c0a324f-ad21-4db5-ad38-36d03d373a50" >
-				<munit:variables >
-					<munit:variable key="muleStats" value="#['{&quot;muleRuntime&quot; : &quot;1.0&quot;}']" mediaType="text/json" />
-					<munit:variable key="appStats.backendSystems" value="#['{&quot;jvmProperties&quot; : {&quot;processId&quot;: &quot;test&quot; }}']" mediaType="application/json" />
-					<munit:variable key="runtimeStats" value="#['{&quot;systemStatus&quot; : 200}']" mediaType="application/json" />
-				</munit:variables>
-			</munit:set-event> -->
+		<munit:execution>
 			<flow-ref doc:name="call get:\health:health-check-api-config" doc:id="a1f119c5-3b38-4dfc-b2cd-9ba8e0fc808b" name="get:\health:health-check-api-config"/>
 		</munit:execution>
 		<munit:validation >
 			<munit-tools:assert-that doc:name="Assert payload not null" doc:id="4510f4e5-5f36-4ef1-b301-ea7ff20feea3" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Payload is null"/>
-			<munit-tools:assert-that expression="#[output application/json ---payload.muleRuntime]" is="#[MunitTools::equalTo('4.2.2')]" message="The response payload is incorrect!" doc:name="Assert That - Payload is Expected" />
+			<munit-tools:assert-that expression="#[output application/json ---payload.muleRuntime]" is="#[MunitTools::equalTo('4.2.2')]" message="The response payload is incorrect!" doc:name="Assert That - mule properties" />
+			<munit-tools:assert-that expression='#[output application/json --- write ( sizeOf(payload.jvmProperties.memory), "text/plain")]' is="#[MunitTools::equalTo('2')]" message="The response payload is incorrect!" doc:name="Assert That - memory types" doc:id="cb6246ef-cd1b-40f7-9103-b532ac9c832f"/>
+			<munit-tools:assert-that expression="#[output application/json --- payload.osProperties.osName]" is="#[MunitTools::equalTo('Mac OS X')]" message="The response payload is incorrect!" doc:name="Assert That - osProperties osName" />
+			<munit-tools:assert-that expression='#[output application/json --- write(sizeOf(payload.systems), "text/plain")]' is="#[MunitTools::equalTo('2')]" message="The response payload is incorrect!" doc:name="Assert That - total backend system" />
 		</munit:validation>
 	</munit:test>
 	<munit:test name="overall-health-exception-handling-test">
