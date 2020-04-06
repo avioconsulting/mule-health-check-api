@@ -1,23 +1,31 @@
 #%RAML 1.0 DataType
+
+uses:
+  jvm: jvm-info.raml
+
 type: object
 properties:
-  muleProperties:
-    type: !include mule-properties.raml
-    description: Properties Related to Mule
-  jvmProperties:
-    type: !include jvm-properties.raml
-    description: Properties Related to Java Virtual Machine(JVM)
-  osProperties:
-    type: !include os-properties.raml
-    description: Properties related to the Operating System
-  timestamp:
-    type: datetime
-    description: Current Timstamp when the health check was made
-    example: "2019-07-30T09:30:10Z"
-  correlationId:
-    type: string
-    description: universally unique identifier for identifying the request
-    example: "648c5fb2-0d74-11ea-9dab-105bad3268d7"
+  request:
+    type: !include request-info.raml
+    description: Health check request information
+  mule:
+    type: !include mule-info.raml
+    description: Mule runtime information
+  server:
+    type: !include server-info.raml
+    description: Server and OS information
+  git:
+    required: false
+    type: !include git-info.raml
+    description: Git information for this build
+  build:
+    required: false
+    type: !include build-info.raml
+    description: Build information (artifact name, version and groupid)
+  jvm:
+    type: jvm.jvm
+    description: JVM information including version, memory, gc and thread usage
   systems:
     type: array
-    items: !include app-properties.raml
+    items: !include system-check.raml
+    description: List of system health check results

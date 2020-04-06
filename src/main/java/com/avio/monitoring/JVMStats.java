@@ -108,6 +108,20 @@ public class JVMStats {
 			return this;
 		}
 	}
+	
+	public static OSStats getOSStats() {
+		//OS
+		OSStats stats = new OSStats();
+		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+		stats.setPid(ManagementFactory.getRuntimeMXBean().getName());
+		stats.setSystemLoadAverage(osBean.getSystemLoadAverage());
+		stats.setAvailableProcessors(osBean.getAvailableProcessors());
+		stats.setFreePhysicalMemorySize(osBean.getFreePhysicalMemorySize());
+		stats.setProcessCpuTime(osBean.getProcessCpuTime());
+		stats.setSystemCpuLoad(osBean.getSystemCpuLoad());
+		stats.setProcessCpuLoad(osBean.getProcessCpuLoad());	
+		return stats;
+	}
 
 
 }

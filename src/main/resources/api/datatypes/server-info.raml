@@ -1,0 +1,51 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  host:
+    type: string
+    description: Hostname of the server
+    example: "AC0084"
+  ip:
+    type: string
+    description: IP address of the server
+    example: "172.27.112.1"
+  timeZone:
+    type: string
+    description: Time zone of the server
+    example: "Central Standard Time"  
+  osName:
+    type: string
+    description: The name of the underlying Operating System
+    example: "Linux"
+  osVersion:
+    type: string
+    description: Version of the Operating System
+    example: "5.3.0-45-generic"
+  osArchitechture:
+    type: string
+    description: Platform architecture
+    example: "amd64"
+  systemLoadAverage:
+    type: number
+    description: Returns the system load average for the last minute. The system load average is the sum of the number of runnable entities queued to the available processors and the number of runnable entities running on the available processors averaged over a period of time. The way in which the load average is calculated is operating system specific but is typically a damped time-dependent average.  If the load average is not available, a negative value is returned. <p>This method is designed to provide a hint about the system load and may be queried frequently. The load average may be unavailable on some platform where it is expensive to implement this method.
+    example: 1.27
+  availableProcessors:
+    type: number
+    description: Returns the number of processors available to the Java virtual machine
+    example: 12
+  freePhysicalMemorySize:
+    type: number
+    description: 
+    example: 3511959552
+  processCpuTime:
+    type: number
+    description: 
+    example: 17609375000
+  systemCpuLoad:
+    type: number
+    description: 
+    example: 0.19030291319561202
+  processCpuLoad:
+    type: number
+    description: 
+    example: 0.00883197685473775

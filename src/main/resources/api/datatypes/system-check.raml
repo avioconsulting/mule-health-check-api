@@ -1,0 +1,30 @@
+#%RAML 1.0 DataType
+type: object
+properties:  
+  name:
+    description: Name of the system of the backend system
+    type: string
+  status:
+    description: Health status of backend system (OK = good, ERROR = underlying system fails, UNKNOWN = invalid health check flow name)   
+    type: 
+      enum:
+        - OK
+        - ERROR
+        - UNKNOWN    
+  connectionConfig:
+    description: Connection configuration of the backend system (URL, port, path, etc...)
+    required: false
+    type: string
+  user:
+    description: Username for the connection
+    required: false
+    type: string
+  exception:
+    description: Exception that occurred during the health check
+    type: string
+  timestamp:
+    description: Current timestamp in yyyy-MM-dd HH:mm:ss format
+    type: datetime
+  executionTime:
+    description: Time in milliseconds that the health check required
+    type: number
