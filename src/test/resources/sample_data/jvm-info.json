@@ -1,0 +1,21 @@
+jvm : {
+    "vmName": "Java HotSpot(TM) 64-Bit Server VM",
+    "vmVendor": "Oracle Corporation",
+    "vmVersion": "1.8.0_231",
+    "pid": "29488@AC0084",
+    "locale": "English (United States)",
+    "memory": {
+      "heap": {
+        "init": 264241152,
+        "used": 212208352,
+        "committed": 513802240,
+        "max": 3756523520
+      },
+      "nonHeap": {
+        "init": 2555904,
+        "used": 61171016,
+        "committed": 62193664,
+        "max": -1
+      }	
+	}
+}

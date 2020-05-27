@@ -1,28 +1,56 @@
 #%RAML 1.0 NamedExample
 {
-  "muleProperties": {
-    "muleRuntime": "3.9.3",
-    "apiName": "health-check-api",
-    "server": "AC0084",
+  "request" : {
+    "timestamp": "2019-12-27T11:23:18.168-06:00",
+    "correlationId": "925bfc10-28cd-11ea-b774-105bad3268d7",
     "url": "http://localhost:8081/lib/health/check",
-    "ip": "10.0.75.1",
-    "timeZone": "America/Chicago",
-    "environment": "${env}"
+    "status": "OK"
+  },  
+  "mule" : {
+    "appName" : "health-check-api-example",
+    "runtimeVersion" : "4.2.2",
+    "environment" : "DEV"
   },
-  "jvmProperties": {
-    "pid": "29488@AC0084",
+  "server" : {
+    "host" : "AC0050",
+    "ip" : "10.0.0.1",
+    "timeZone" : "Central Standard Time",
+    "osName": "Linux",
+    "osVersion": "5.3.0-45-generic",
+    "osArchitecture": "amd64",
+    "systemLoadAverage": 1.27,
+    "availableProcessors": 12,
+    "freePhysicalMemorySize": 3750350848,
+    "processCpuTime": 14437500000,
+    "systemCpuLoad": 0.0,
+    "processCpuLoad": 0.05657935521623634    
+  },
+  "git" : {
+    "commit" : {
+      "time" : "2019-12-27T11:23:18.168-06:00",
+      "id" : "df027cf"
+    },
+    "branch" : "master"
+  },
+  "build" : {
+    "version" : "1.0.3",
+    "artifact" : "health-check-api-example",
+    "group" : "com.avioconsulting.mule.api"
+  },
+  "jvm": {
     "vmName": "Java HotSpot(TM) 64-Bit Server VM",
     "vmVendor": "Oracle Corporation",
     "vmVersion": "1.8.0_231",
+    "pid": "29488@AC0084",
     "locale": "English (United States)",
     "memory": {
-      "heapMemoryUsage": {
+      "heap": {
         "init": 264241152,
         "used": 212208352,
         "committed": 513802240,
         "max": 3756523520
       },
-      "nonHeapMemoryUsage": {
+      "nonHeap": {
         "init": 2555904,
         "used": 61171016,
         "committed": 62193664,
@@ -46,43 +74,33 @@
       }
     ]
   },
-  "osProperties": {
-    "osName": "Windows 10",
-    "osVersion": "10.0",
-    "osArchitechture": "amd64",
-    "systemLoadAverage": -1.0,
-    "availableProcessors": 12,
-    "freePhysicalMemorySize": 3750350848,
-    "processCpuTime": 14437500000,
-    "systemCpuLoad": 0.0,
-    "processCpuLoad": 0.05657935521623634
-  },
-  "timestamp": "2019-12-27T11:23:18.168-06:00",
-  "correlationId": "925bfc10-28cd-11ea-b774-105bad3268d7",
   "systems" : [  
       {
-        "systemName": "HTTPS",
+        "name": "HTTPS",
         "connectionConfig": "api-dev.srs.aws.avioconsulting.com:443/orders-system-api",
         "user": "N/A",
         "status": "OK",
         "exception": "N/A",
-        "timestamp": "2020-01-07 10:43:11"
+        "timestamp": "2019-12-27T11:23:18.168-06:00",
+        "executionTime" : 10.7
       },
       {
-        "systemName" : "Amazon S3",
+        "name" : "Amazon S3",
         "connectionConfig" : "N/A",
         "user": "N/A",
         "status" : "ERROR",
         "exception": "N/A",
-        "timestamp": "2020-01-07 10:43:21"
+        "timestamp": "2019-12-27T11:23:18.168-06:00",
+        "executionTime" : 10.7
       },
       {
-        "systemName": "SQLServer",
+        "name": "SQLServer",
         "connectionConfig": "jdbc:sqlserver://localhost;ODSAPI;ODSApiApp",
-        "user": "N/A",
-        "status": "UNKNOWN",
-        "exception": "N/A",
-        "timestamp": "2020-01-07 10:43:34"
+        "user": "sql-user",
+        "status": "OK",
+        "exception": "",
+        "timestamp": "2019-12-27T11:23:18.168-06:00",
+        "executionTime" : 10.7
       }
   ]   
 }

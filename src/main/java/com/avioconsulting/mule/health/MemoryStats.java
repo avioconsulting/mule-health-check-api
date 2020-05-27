@@ -1,4 +1,4 @@
-package com.avio.monitoring;
+package com.avioconsulting.mule.health;
 
 public class MemoryStats {
 	private long heapMemoryUsageInit;
@@ -10,6 +10,7 @@ public class MemoryStats {
 	private long nonHeapMemoryUsageUsed;
 	private long nonHeapMemoryUsageCommitted;
 	private long nonHeapMemoryUsageMax;
+	
 	public long getHeapMemoryUsageInit() {
 		return heapMemoryUsageInit;
 	}

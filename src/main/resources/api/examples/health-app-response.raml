@@ -1,38 +1,43 @@
 #%RAML 1.0 NamedExample
 {
-   "muleProperties": {
-    "muleRuntime": "3.9.3",
-    "apiName": "health-check-api",
-    "server": "AC0084",
+  "request" : {
+    "timestamp": "2019-12-27T11:23:18.168-06:00",
+    "correlationId": "925bfc10-28cd-11ea-b774-105bad3268d7",
     "url": "http://localhost:8081/lib/health/check",
-    "ip": "10.0.75.1",
-    "timeZone": "America/Chicago",
-    "environment": "${env}"
+    "status": "OK"
+  },  
+  "mule" : {
+    "appName" : "health-check-api-example",
+    "runtimeVersion" : "4.2.2",
+    "environment" : "DEV"
   },
-  "systems": [
-    {
-        "systemName": "HTTPS",
+  "systems" : [  
+      {
+        "name": "HTTPS",
         "connectionConfig": "api-dev.srs.aws.avioconsulting.com:443/orders-system-api",
         "user": "N/A",
         "status": "OK",
         "exception": "N/A",
-        "timestamp": "2020-01-07 10:43:11"
+        "timestamp": "2019-12-27T11:23:18.168-06:00",
+        "executionTime" : 10.7
       },
       {
-        "systemName" : "Amazon S3",
+        "name" : "Amazon S3",
         "connectionConfig" : "N/A",
         "user": "N/A",
-        "status" : "ERROR",
+        "status" : "OK",
         "exception": "N/A",
-        "timestamp": "2020-01-07 10:43:21"
+        "timestamp": "2019-12-27T11:23:18.168-06:00",
+        "executionTime" : 10.7
       },
       {
-        "systemName": "SQLServer",
+        "name": "SQLServer",
         "connectionConfig": "jdbc:sqlserver://localhost;ODSAPI;ODSApiApp",
-        "user": "N/A",
-        "status": "UNKNOWN",
-        "exception": "N/A",
-        "timestamp": "2020-01-07 10:43:34"
+        "user": "sql-user",
+        "status": "OK",
+        "exception": "",
+        "timestamp": "2019-12-27T11:23:18.168-06:00",
+        "executionTime" : 10.7
       }
-  ]
+  ]    
 }

@@ -1,78 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<mule xmlns:avio-core="http://www.mulesoft.org/schema/mule/avio-core"
+<mule
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:avio-core="http://www.mulesoft.org/schema/mule/avio-core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
-	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<munit:config name="runtime-health-check-test-suite.xml" />
-	<munit:test name="runtime-stats-flow-test" doc:id="d6c3075c-9471-4f73-817e-ec9197560fc2" description="Test">
-		<munit:execution >
-			<flow-ref doc:name="call runtime-stats-flow" doc:id="ecb88dbc-d4ae-4866-a034-748f05bf664d" name="runtime-stats-flow"/>
-		</munit:execution>
-		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert not null jvmProperties" doc:id="35f2d4f8-644a-46a0-890d-ccd564ec42b0" expression="#[write(payload.jvmProperties, 'text/json')]" is="#[MunitTools::notNullValue()]"/>
-			<munit-tools:assert-that doc:name="Assert key jvmProperties.pid" doc:id="568b002b-92f1-4dfc-82e2-431c3e54fc94" expression="#[payload.jvmProperties]" is="#[MunitTools::hasKey('pid')]" message="Doesnt have key pid"/>
-			<munit-tools:assert-that doc:name="Assert key jvmProperties heap memory" doc:id="761f97d5-629d-49f1-89df-c59d5e6bb9bc" expression="#[payload.jvmProperties.memory]" is="#[MunitTools::hasKey('heapMemoryUsage')]" message="Doesnt have key heapMemoryUsage"/>
-			<munit-tools:assert-that doc:name="Assert key jvmProperties non heap memory" doc:id="c93e5a75-a50e-467e-8cf4-50f5d01764e7" expression="#[payload.jvmProperties.memory]" is="#[MunitTools::hasKey('nonHeapMemoryUsage')]" message="Doesnt have key nonheapMemoryUsage"/>	
-			<munit-tools:assert-that doc:name="Assert not null osProperties" doc:id="28365be0-506d-41af-8c62-379684352324" expression="#[write(payload.osProperties, 'text/json')]" is="#[MunitTools::notNullValue()]"/>
-			<munit-tools:assert-that doc:name="Assert key osProperties.osName" doc:id="3de11bdc-3790-403a-b2b1-f463d3bc03ef" expression="#[payload.osProperties]" is="#[MunitTools::hasKey('osName')]"/>
-		</munit:validation>
-	</munit:test>
-	<munit:test name="health-check-runtime-test" doc:id="d36e83c7-49f7-4053-ba37-ff6ac7b2d58c"
+	<munit:test
+		name="health-check-runtime-test"
+		doc:id="d36e83c7-49f7-4053-ba37-ff6ac7b2d58c"
 		description="Test">
-		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock when mule stats flow" doc:id="cbf1b711-e863-40be-a30b-db4af352dc5c" processor="flow-ref">
-				<munit-tools:with-attributes >
-					<munit-tools:with-attribute whereValue="mule-stats-flow" attributeName="doc:name" />
+		<munit:behavior>
+			<munit-tools:mock-when
+				doc:name="Mock request-info-subflow"
+				doc:id="cbf1b711-e863-40be-a30b-db4af352dc5c"
+				processor="flow-ref">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="request-info-subflow"
+						attributeName="name" />
 				</munit-tools:with-attributes>
-				<munit-tools:then-return >
-					<munit-tools:payload value="#[readUrl('classpath://sample_data/mule-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
-					<munit-tools:variables >
-						<munit-tools:variable key="muleStats" value="#[readUrl('classpath://sample_data/mule-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+				<munit-tools:then-return>
+					<munit-tools:payload
+						value="#[readUrl('classpath://sample_data/request-info.json')]"
+						mediaType="application/java"
+						encoding="UTF-8" />
+					<munit-tools:variables>
+						<munit-tools:variable
+							key="requestInfo"
+							value="#[readUrl('classpath://sample_data/request-info.json')]"
+							mediaType="application/java" />
 					</munit-tools:variables>
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
-			<munit-tools:mock-when doc:name="Mock when runtime-stats" doc:id="37750080-b41d-44c3-ab65-684c71e61d46" processor="flow-ref">
-				<munit-tools:with-attributes >
-					<munit-tools:with-attribute whereValue="runtime-stats-flow" attributeName="doc:name" />
+			<munit-tools:mock-when
+				doc:name="Mock server-info-subflow"
+				doc:id="ef53e18f-d948-4d7c-b71a-cd0b216f37bc"
+				processor="flow-ref">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="server-info-subflow"
+						attributeName="name" />
 				</munit-tools:with-attributes>
-				<munit-tools:then-return >
-					<munit-tools:payload value="#[readUrl('classpath://sample_data/runtime-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
-					<munit-tools:variables >
-						<munit-tools:variable key="runtimeStats" value="#[readUrl('classpath://sample_data/runtime-stats-response.json')]" mediaType="application/java" encoding="UTF-8" />
+				<munit-tools:then-return>
+					<munit-tools:payload
+						value="#[readUrl('classpath://sample_data/server-info.json')]"
+						mediaType="application/java"
+						encoding="UTF-8" />
+					<munit-tools:variables>
+						<munit-tools:variable
+							key="serverInfo"
+							value="#[readUrl('classpath://sample_data/server-info.json')]"
+							mediaType="application/java" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when
+				doc:name="Mock jvm-info-subflow"
+				doc:id="60b73053-d572-4937-8f5b-87ef2e527c99"
+				processor="flow-ref">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="jvm-info-subflow"
+						attributeName="name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload
+						value="#[readUrl('classpath://sample_data/jvm-info.json')]"
+						mediaType="application/java"
+						encoding="UTF-8" />
+					<munit-tools:variables>
+						<munit-tools:variable
+							key="jvmInfo"
+							value="#[readUrl('classpath://sample_data/jvm-info.json')]"
+							mediaType="application/java" />
 					</munit-tools:variables>
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
 		<munit:execution>
-			<flow-ref doc:name="call get:\health\runtime:health-check-api-config"
-				doc:id="c3d4fb01-2d05-415c-a5f1-e3eb1635a053" name="get:\health\runtime:health-check-api-config" />
+			<flow-ref
+				doc:name="call get:\health\runtime:health-check-api-config"
+				doc:id="c3d4fb01-2d05-415c-a5f1-e3eb1635a053"
+				name="get:\health\runtime:health-check-api-config" />
 		</munit:execution>
 		<munit:validation>
-			<munit-tools:assert-that doc:name="Assert payload not null"
-				doc:id="6676fdff-35aa-4e82-a165-30019cf34d74" expression="#[payload]"
-				is="#[MunitTools::notNullValue()]" message="The payload is null !"/>
-			<munit-tools:assert-that doc:name="Assert payload muleRuntime"
-				doc:id="224f569c-4629-47e4-aa24-a8050953bc5e" expression="#[output application/json ---payload.muleRuntime]"
-				is="#[MunitTools::equalTo('4.2.2')]" message="The response payload is incorrect"/>
-			<munit-tools:assert-that doc:name="Assert payload jvm Properties"
-				doc:id="66bb43da-739c-4d36-81aa-cdcc1c2f4133" expression="#[output application/json ---payload.jvmProperties.pid]"
-				is="#[MunitTools::equalTo('34978@AC0078')]" message="The payload is null !"/>
-			<munit-tools:assert-that expression='#[output application/json --- write ( sizeOf(payload.jvmProperties.memory), "text/plain")]' is="#[MunitTools::equalTo('2')]" message="The response payload is incorrect!" doc:name="Assert That - memory types" doc:id="23c9b971-1801-4274-830f-819c377b288a"/>
-			<munit-tools:assert-that expression="#[output application/json --- payload.osProperties.osName]" is="#[MunitTools::equalTo('Mac OS X')]" message="The response payload is incorrect!" doc:name="Assert That - osProperties osName" />
+			<munit-tools:assert-equals
+				doc:name="Assert Mule Info"
+				doc:id="0ff23b67-b560-4fda-83b4-08f811d14573"
+				actual="#[payload.mule]"
+				expected='#[{
+	"appName": "health-check-api-mule4",
+	"runtimeVersion": mule.version,
+	"environment": "dev"
+}]' message="Mule Info does not match expected"/>
+			<munit-tools:assert-that doc:name="Assert JVM Version" doc:id="1a0b43bf-a3c0-45d5-a578-61a3ec7291b6" is="#[MunitTools::startsWith('1.8')]" expression="#[payload.jvm.vmVersion]" message="JVM Version does not match expected"/>
+			<munit-tools:assert-equals doc:name="Assert OS Name" doc:id="b1d16251-c32c-4607-81d0-e0a4ce76ddb0" actual="#[payload.server.osName]" expected="#['Linux']" message="OS Name does not match expected"/>
+			<munit-tools:assert-that doc:name="Assert Correlation ID" doc:id="e39392ef-eea8-4a57-b5ec-0fa4da130e83" is="#[MunitTools::notNullValue()]" expression="#[payload.request.correlationId]"/>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="runtime-health-exception-handling-test">
 		<munit:behavior>
-			<munit-tools:mock-when processor="flow-ref" doc:name="throw ANY error on runtime-stats">
-				<munit-tools:with-attributes >
-					<munit-tools:with-attribute whereValue="runtime-stats-flow" attributeName="name" />
+			<munit-tools:mock-when
+				processor="flow-ref"
+				doc:name="throw ANY error on request-info-subflow">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="request-info-subflow" attributeName="name" />
 				</munit-tools:with-attributes>
-				<munit-tools:then-return>
+				<munit-tools:then-return >
 					<munit-tools:error typeId="ANY" />
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
@@ -88,8 +130,17 @@
         </try>
 		</munit:execution>
 		<munit:validation>
-			<munit-tools:assert-that doc:name="Assert http 500" doc:id="a68afe16-f0ec-4bf3-81aa-b6289c4aeff5" expression='#[vars.httpStatus]' is="#[MunitTools::equalTo(500)]" message="httpStatus not equal to 500"/>
-			<munit-tools:assert-that doc:name="Assert payload string" doc:id="fa746016-833b-48a4-8fab-675de4601f44" expression="#[payload.message]" is="#[MunitTools::containsString('error getting the health runtime stats')]" message="Error String doesnt match"/>
+			<munit-tools:assert-equals doc:name="Assert 500 HTTP Status" doc:id="97872f94-4f86-45c9-88d0-c17ad02c302d" actual="#[vars.httpStatus]" expected='#[500]' message="httpStatus not equal to 500"/>
+			<munit-tools:assert-equals doc:name="Assert Error Payload" doc:id="96f92d2d-7d21-4cab-b978-33a4defb164b" expected='#[%dw 2.0
+output application/json
+---
+{     
+	"statusCode" : "500",
+	"error" : {    
+		"errorType": "MULE:ANY",
+		"message" : ""
+	}
+}]' actual="#[payload]" message="Error payload is not valid"/>
 		</munit:validation>
 	</munit:test>
 </mule>

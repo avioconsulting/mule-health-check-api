@@ -1,6 +1,7 @@
 #%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/087e92e7-7a64-4818-8cd5-05dad3c5ea79/ # 
 title: Health Check API
-version: v1.0.3
+version: v1
 
 traits:
   error: !include traits/error-response-trait.raml
@@ -43,7 +44,7 @@ types:
           application/json:
             type: health-app
             example: !include examples/health-app-response.raml
-      500:
+      503:
         body:
           application/json:
             type: health-app

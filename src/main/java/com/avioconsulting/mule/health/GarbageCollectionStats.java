@@ -1,7 +1,6 @@
-package com.avio.monitoring;
+package com.avioconsulting.mule.health;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class GarbageCollectionStats {
 	

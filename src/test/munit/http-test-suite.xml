@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" 
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<munit:config name="http-test-suite.xml" >
+		<munit:parameterizations>
+	        <munit:parameterization name="no-prefix">
+	            <munit:parameters>
+	                <munit:parameter propertyName="healthcheck.baseUrl" value="/"/>
+	            </munit:parameters>
+	        </munit:parameterization>
+	        <munit:parameterization name="app-prefix">
+	            <munit:parameters>
+	                <munit:parameter propertyName="healthcheck.baseUrl" value="/my-api"/>
+	            </munit:parameters>
+	        </munit:parameterization>
+    	</munit:parameterizations>
+	</munit:config>
+	<munit:dynamic-port propertyName="http.port" />
+	<http:request-config
+		name="HTTP_Request_configuration"
+		doc:name="HTTP Request configuration"
+		doc:id="7caccc87-142a-45fe-b6bd-7a48c8193f9c">
+		<http:request-connection
+			host="localhost"
+			port="${http.port}" />
+	</http:request-config>
+	<munit:test
+		name="runtime-http-test"
+		doc:id="be6bfa71-a53a-45db-bcdf-8c5a7637b33d">
+		<munit:enable-flow-sources>
+			<munit:enable-flow-source
+				value="health-check-api-main" />
+			<munit:enable-flow-source value="get:\health\runtime:health-check-api-config" />
+		</munit:enable-flow-sources>
+		<munit:execution>
+			<http:request
+				method="GET"
+				doc:name="Request"
+				doc:id="b47f4f3f-0723-4ab2-98e2-4f9ca006e3cf"
+				config-ref="HTTP_Request_configuration"
+				path="#[Mule::p('healthcheck.baseUrl') ++ 'monitor/health/runtime']">
+				<http:headers><![CDATA[#[output application/java
+---
+{
+	client_secret : "345236543464554",
+	client_id : "21312423423"
+}]]]></http:headers>
+			</http:request>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="a8f158f8-9d10-4e82-889a-ed16d1c4cd2f" actual="#[attributes.statusCode]" expected="#[200]"/>
+			<munit-tools:assert-equals
+				doc:name="Assert equals"
+				doc:id="2000bd6b-1fd7-458a-bf19-241d0a3d7c95"
+				actual="#[payload.mule.runtimeVersion]"
+				expected="#['4.2.2']" />
+			<munit-tools:assert doc:name="Assert expression" doc:id="e4d97890-c133-4171-bd74-818bdd560918" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.request must [
+	$.timestamp must beString(),
+	$.correlationId must haveSize(36),
+	$.url must startWith('http://'),
+	$.url must endWith(p('healthcheck.baseUrl')++'monitor/health/runtime'),
+	$.status must equalTo('OK')
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="apikit-method-not-allowed" doc:id="cee51e73-fc73-4b3c-9047-e0b1f063dbad">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="health-check-api-main" />
+		</munit:enable-flow-sources>
+				<munit:execution >
+			<http:request method="POST" doc:name="Request" doc:id="78b60e14-be95-41f0-bdc0-64cd01bd1411" config-ref="HTTP_Request_configuration" path="#[Mule::p('healthcheck.baseUrl') ++ 'monitor/health/runtime']">
+				<http:headers><![CDATA[#[output application/java
+---
+{
+	client_secret : "345236543464554",
+	client_id : "21312423423"
+}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="405" />
+				</http:response-validator>
+			</http:request>
+			</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert HTTP 405 Status Code" doc:id="6bc259f2-8fb0-4de0-88ec-d97194cdaab2" actual="#[attributes.statusCode]" expected="#[405]" />
+			<munit-tools:assert-equals doc:name="Assert Error Payload" doc:id="ec80037d-76a5-4efb-8722-2aa8a86c7cdb" actual="#[payload]" expected="#[{
+  &quot;statusCode&quot;: &quot;405&quot;,
+  &quot;error&quot;: {
+    &quot;errorType&quot;: &quot;Method not allowed&quot;,
+    &quot;message&quot;: &quot;The method doesn't exists or is not allowed&quot;
+  }
+}]"/>
+		</munit:validation>
+	</munit:test>
+</mule>

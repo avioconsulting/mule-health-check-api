@@ -1,0 +1,16 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  commit: 
+    description: Git commit information
+    type: object
+    properties:
+      time: 
+        description: Git commit time
+        type: datetime
+      id: 
+        description: Git commit hash
+        type: string
+  branch:
+    description: Git branch
+    type: string

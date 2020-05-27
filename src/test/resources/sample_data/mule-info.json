@@ -1,0 +1,5 @@
+mule : {
+	"appName": "health-check-api-mule4",
+	"runtimeVersion": "4.2.2",
+	"environment": "DEV"
+}
