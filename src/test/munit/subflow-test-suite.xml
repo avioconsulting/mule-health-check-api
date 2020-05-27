@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="subflow-test-suite.xml" />
+	<munit:test name="jvm-info-test" doc:id="a37bb395-a28e-4250-83cf-a47a5aced0dc" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to jvm-info-subflow" doc:id="0d81e0be-2064-4223-b179-2a71e93b250a" name="jvm-info-subflow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert doc:name="Assert JVM attributes" doc:id="cd137e39-fe9e-4941-a231-1581656f88b1" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.jvm must [ 
+	$.vmName must contain("OpenJDK"),
+	$.vmVendor must beString(),
+	$.vmVersion must contain("1.8"),
+	$.locale must beString()
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert doc:name="Assert Memory Attributes" doc:id="46ac5993-d084-4fec-a6e6-0b338c4afd01" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.jvm.memory must [ 
+	$.heap.init must beNumber(),
+	$.heap.used must beNumber(),
+	$.heap.committed must beNumber(),
+	$.heap.max must beNumber(),		
+	$.nonHeap.init must beNumber(),
+	$.nonHeap.used must beNumber(),
+	$.nonHeap.committed must beNumber(),
+	$.nonHeap.max must beNumber()	
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert doc:name="Assert Thread Attributes" doc:id="618136fd-9804-4895-aff1-d3ca9900e9fb" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.jvm.threadCount must [ 
+	$.activeThreadCount must beNumber(),
+	$.daemonThreadCount must beNumber()
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert doc:name="Assert Garbage Collection Attributes" doc:id="da7fb36b-6335-4358-bc7f-d5b80cdf0c95" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts
+ ---
+payload.jvm.garbageCollection must [ 
+	eachItem(haveKey('gcName')),
+	eachItem(haveKey('collectionCount')),
+	eachItem(haveKey('collectionTime'))		
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mule-info-test" doc:id="9e322caf-631a-4a82-8b1e-3a5e13fd0023" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mule-info-subflow" doc:id="5b06846c-b6f8-423b-91c9-fa51af041119" name="mule-info-subflow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert mule info" doc:id="21b629b3-c61c-4315-8056-8b21d0c6b555" message="Mule info did not match">
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.mule must [
+	$.appName must beString(),
+	$.runtimeVersion must contain('4.'),
+	$.environment must beString()
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="server-info-test" doc:id="d995da33-5bcf-4609-b94f-8191b42eda91" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to server-info-subflow" doc:id="f6a527b8-ed78-4782-b965-ad6354a192bb" name="server-info-subflow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Server Info" doc:id="b26a6fdd-4890-407c-a4cb-d8ae2a5b4795" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.server must [
+	$.host must beString(),
+	$.ip must contain('.'),
+	$.timeZone must beString(),
+	$.osName must beString(),
+	$.osVersion must beString(),
+	$.osArchitecture must beString(),
+	$.systemLoadAverage must beNumber(),
+	$.availableProcessors must beNumber(),
+	$.freePhysicalMemorySize must beNumber(),
+	$.processCpuTime must beNumber(),
+	$.systemCpuLoad must beNumber(),
+	$.processCpuLoad must beNumber()
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="git-info-test" doc:id="1300b909-e56d-454b-9ec6-f96a9f7e9b1a" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to git-info-subflow" doc:id="a2614465-4617-4fca-ba9c-bc65aa22ff91" name="git-info-subflow"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="build-info-test" doc:id="db128a42-df1b-451a-89a6-1bbf32670304" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to build-info-subflow" doc:id="df47a96c-cb92-48a4-b1e6-43117a52a1f1" name="build-info-subflow"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="app-stats-test" doc:id="36e61ff8-8817-4605-b243-c09fa25b9960" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to app-stats-flow" doc:id="cca6d4d1-612c-46ab-a915-2adf74f2f2f0" name="app-stats-flow"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="get-app-dependency-test" doc:id="36238093-c74f-493f-994d-f6120ad10597" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get-app-dependency-subflow" doc:id="e432c629-844f-476c-af82-53aab39b9d34" name="get-app-dependency-subflow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Array and Size" doc:id="18779e65-cbd6-47dd-9cf2-057dd847022c" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must [
+	$ must beArray(),
+	$ must haveSize(2)
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+</mule>

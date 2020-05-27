@@ -1,4 +1,4 @@
-package com.avio.monitoring;
+package com.avioconsulting.mule.health;
 
 public class IndividualGCStats {
 	private String gcName;

@@ -1,51 +1,50 @@
 {
-"jvmProperties": {
-    "pid": "34978@AC0078",
-    "vmName": "Java HotSpot(TM) 64-Bit Server VM",
-    "vmVendor": "Oracle Corporation",
-    "vmVersion": "1.8.0_221",
-    "locale": "English (United States)",
-    "memory": {
-      "heapMemoryUsage": {
-        "init": 268435456,
-        "used": 558240168,
-        "committed": 1459093504,
-        "max": 3817865216
-      },
-      "nonHeapMemoryUsage": {
-        "init": 2555904,
-        "used": 174068792,
-        "committed": 190001152,
-        "max": -1
-      }
-    },
-    "threadCount": {
-      "activeThreadCount": 118,
-      "daemonThreadCount": 23
-    },
-    "garbageCollection": [
-      {
-        "gcName": "PS Scavenge",
-        "collectionCount": 13,
-        "collectionTime": 134
-      },
-      {
-        "gcName": "PS MarkSweep",
-        "collectionCount": 4,
-        "collectionTime": 343
-      }
-    ]
-  },
-  "osProperties": {
-    "osName": "Mac OS X",
-    "osVersion": "10.14.6",
-    "osArchitechture": "x86_64",
-    "systemLoadAverage": 2.33349609375,
-    "availableProcessors": 16,
-    "freePhysicalMemorySize": 806207488,
-    "processCpuTime": 62369911000,
-    "systemCpuLoad": 0.0,
-    "processCpuLoad": 0.0
-  }
- 
+	"jvmProperties": {
+		"pid": "34978@AC0078",
+		"vmName": "Java HotSpot(TM) 64-Bit Server VM",
+		"vmVendor": "Oracle Corporation",
+		"vmVersion": "1.8.0_221",
+		"locale": "English (United States)",
+		"memory": {
+			"heapMemoryUsage": {
+				"init": 268435456,
+				"used": 558240168,
+				"committed": 1459093504,
+				"max": 3817865216
+			},
+			"nonHeapMemoryUsage": {
+				"init": 2555904,
+				"used": 174068792,
+				"committed": 190001152,
+				"max": -1
+			}
+		},
+		"threadCount": {
+			"activeThreadCount": 118,
+			"daemonThreadCount": 23
+		},
+		"garbageCollection": [
+			{
+				"gcName": "PS Scavenge",
+				"collectionCount": 13,
+				"collectionTime": 134
+			},
+			{
+				"gcName": "PS MarkSweep",
+				"collectionCount": 4,
+				"collectionTime": 343
+			}
+		]
+	},
+	"osProperties": {
+		"osName": "Mac OS X",
+		"osVersion": "10.14.6",
+		"osArchitechture": "x86_64",
+		"systemLoadAverage": 2.33349609375,
+		"availableProcessors": 16,
+		"freePhysicalMemorySize": 806207488,
+		"processCpuTime": 62369911000,
+		"systemCpuLoad": 0.0,
+		"processCpuLoad": 0.0
+	}
 }

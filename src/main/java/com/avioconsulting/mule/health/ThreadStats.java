@@ -1,4 +1,4 @@
-package com.avio.monitoring;
+package com.avioconsulting.mule.health;
 
 public class ThreadStats {
 	private int activeThreadCount;
