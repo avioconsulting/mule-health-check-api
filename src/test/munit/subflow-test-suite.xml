@@ -122,7 +122,7 @@ payload.server must [
  ---
 payload must [
 	$ must beArray(),
-	$ must haveSize(2)
+	$ must haveSize(3)
 ]]]]></munit-tools:that>
 			</munit-tools:assert>
 		</munit:validation>
