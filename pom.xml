@@ -185,4 +185,16 @@
 			<url>https://devops.avioconsulting.com/nexus/repository/avio-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<profiles>
+        <profile>
+            <id>exchange</id>
+            <distributionManagement>
+                <repository>
+                    <id>anypoint-exchange</id>
+                    <name>Exchange Repository</name>
+                    <url>https://maven.anypoint.mulesoft.com/api/v2/organizations/${project.groupId}/maven</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>
