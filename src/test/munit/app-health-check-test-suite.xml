@@ -120,7 +120,7 @@
 		</munit:execution>
 		<munit:validation >
 			<munit-tools:assert-equals doc:name="Assert Mule Info" doc:id="f36a1f02-c539-4f7d-abf1-1833eb636f57" actual="#[payload.mule]" expected='#[{
-	"appName": "health-check-api-mule4",
+	"appName": "mule-health-check-api",
 	"runtimeVersion": mule.version,
 	"environment": "dev"
 }]' message="Mule Info does not match expected" />

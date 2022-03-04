@@ -2,7 +2,7 @@
 <mule
 	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
 	xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:avio-core="http://www.mulesoft.org/schema/mule/avio-core"
+	xmlns:avio-logger="http://www.mulesoft.org/schema/mule/avio-logger"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
@@ -10,7 +10,7 @@
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/avio-core http://www.mulesoft.org/schema/mule/avio-core/current/mule-avio-core.xsd
+http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
@@ -24,12 +24,12 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 		doc:name="Configuration properties"
 		doc:id="88c27769-b67c-45e0-9b67-de406d4db851"
 		file="health-check-api.properties" />
-	<avio-core:config
-		name="AVIO_Core_Config_Health"
-		doc:name="AVIO Core Config"
+	<avio-logger:config
+		name="Health_Check_Logger_Config"
+		doc:name="Health Check Logger Config"
 		doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb"
-		app_version="${healthcheck.app.version}"
-		app_name="${healthcheck.app.name}" />
+		applicationVersion="${healthcheck.app.version}"
+		applicationName="${healthcheck.app.name}" />
 	<api-gateway:autodiscovery
 		apiId="${healthcheck.apiId}"
 		doc:name="API Autodiscovery"
@@ -104,12 +104,11 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="get:\health:health-check-api-config">
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log Start"
 			doc:id="836ce6e0-a87d-4835-8859-99be0347f475"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="START"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing Request for /health endpoint" />
 		<flow-ref
@@ -160,12 +159,11 @@ output application/java
 vars.appStats.systemStatus]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log End"
 			doc:id="bf64762d-25eb-4b8f-af0f-a16a59140060"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="END"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Completed Processing Request for /health endpoint" />
 		<error-handler>
@@ -174,17 +172,16 @@ vars.appStats.systemStatus]]></ee:set-variable>
 				logException="true"
 				doc:name="On Error Propagate"
 				doc:id="7ee8a3b1-8b74-4d6f-bef6-142ebfc867fb">
-				<avio-core:custom-logger
+				<avio-logger:log
 					doc:name="Log Error"
 					doc:id="664fb776-a27b-43d6-a499-e5421168e29d"
-					config-ref="AVIO_Core_Config_Health"
-					correlation_id="#[vars.correlationId]"
-					tracePoint="EXCEPTION"
+					config-ref="Health_Check_Logger_Config"
+					correlationId="#[vars.correlationId]"
 					category="${healthcheck.log.category}"
 					message="Error Processing Request for overall health endpoint"
 					level="ERROR"
 					payload='#[write(payload,"application/json")]'
-					status_code="500"
+					statusCode="500"
 					type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]'
 					detail="#[error.detailedDescription]" />
 				<ee:transform
@@ -208,12 +205,11 @@ output application/java
 		</error-handler>
 	</flow>
 	<flow name="get:\health\app:health-check-api-config">
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log Start"
 			doc:id="1c925648-91a3-4b79-a6e6-84f5b27a4c1e"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="START"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing Request for health/app health Check endpoint" />
 		<flow-ref
@@ -252,12 +248,11 @@ output application/java
 vars.appStats.systemStatus]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log End"
 			doc:id="5249e6ff-ba3b-4b40-abef-a9e8f9e9acd3"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="END"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Completed Processing Request for health/app health Check endpoint" />
 		<error-handler>
@@ -266,17 +261,16 @@ vars.appStats.systemStatus]]></ee:set-variable>
 				logException="true"
 				doc:name="On Error Propagate"
 				doc:id="6de6a774-13a6-4bd7-b1a0-9230c6e25b7c">
-				<avio-core:custom-logger
+				<avio-logger:log
 					doc:name="Log Error"
 					doc:id="0320d587-4c5c-410a-b9ee-d5136533f269"
-					config-ref="AVIO_Core_Config_Health"
-					correlation_id="#[vars.correlationId]"
-					tracePoint="EXCEPTION"
+					config-ref="Health_Check_Logger_Config"
+					correlationId="#[vars.correlationId]"
 					category="${healthcheck.log.category}"
 					message="Error Processing Request for health app endpoint"
 					level="ERROR"
 					payload='#[write(payload,"application/json")]'
-					status_code="500"
+					statusCode="500"
 					type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]'
 					detail="#[error.detailedDescription]" />
 				<ee:transform
@@ -300,12 +294,11 @@ output application/java
 		</error-handler>
 	</flow>
 	<flow name="get:\health\runtime:health-check-api-config">
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log Start"
 			doc:id="ad4e7aeb-37ad-45f6-b9eb-aa14ae57224f"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="START"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing Request for /health/runtime health Check endpoint" />
 		<flow-ref
@@ -344,12 +337,11 @@ vars.serverInfo ++
 vars.jvmInfo]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log End"
 			doc:id="ef231900-7364-48c2-a156-605f3d99fc08"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="END"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Completed Processing Request for  /health/runtime health Check endpoint" />
 		<error-handler>
@@ -358,17 +350,16 @@ vars.jvmInfo]]></ee:set-payload>
 				logException="true"
 				doc:name="On Error Propagate"
 				doc:id="31c81402-9815-419f-8180-a93056682833">
-				<avio-core:custom-logger
+				<avio-logger:log
 					doc:name="Log Error"
 					doc:id="875678be-d6eb-4679-ae05-ff815ab40f96"
-					config-ref="AVIO_Core_Config_Health"
-					correlation_id="#[vars.correlationId]"
-					tracePoint="EXCEPTION"
+					config-ref="Health_Check_Logger_Config"
+					correlationId="#[vars.correlationId]"
 					category="${healthcheck.log.category}"
 					message="Error Processing Request for health runtime endpoint"
 					level="ERROR"
 					payload='#[write(payload,"application/json")]'
-					status_code="500"
+					statusCode="500"
 					type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]'
 					detail="#[error.detailedDescription]" />
 				<ee:transform
@@ -394,12 +385,11 @@ output application/java
 	<sub-flow
 		name="jvm-info-subflow"
 		doc:id="996e0c0b-5b66-496c-b089-2bb4c8deaa03">
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log Start"
 			doc:id="ac6252c0-dd2a-46d4-9a8a-e483119257f8"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="START"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start processing request for Runtime Stats SubFlow" />
 		<java:invoke-static
@@ -449,12 +439,11 @@ var jvmStats = payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log End"
 			doc:id="14df32f4-b433-4b28-bacf-354697c8b016"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="END"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Completed processing request for Runtime Stats Flow" />
 	</sub-flow>
@@ -562,12 +551,11 @@ output application/java
 	<sub-flow
 		name="app-stats-flow"
 		doc:id="cb68ac31-326d-40c6-8eff-d1efc9042348">
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log Start"
 			doc:id="c218c203-1a99-42ee-9a7d-91a5e8a12f86"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="START"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing request for app-stats-flows" />
 		<flow-ref
@@ -673,24 +661,22 @@ output application/java
 				</ee:transform>
 			</otherwise>
 		</choice>
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log End"
 			doc:id="7f361100-f2cd-4c91-8e7a-050c297eb592"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="END"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Completed Processing request for app-stats-flows" />
 	</sub-flow>
 	<sub-flow
 		name="get-app-dependency-subflow"
 		doc:id="bcc47497-9be9-4ad6-ba96-df11ea850dd6">
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log Start"
 			doc:id="28fe443d-494b-40a0-b90d-0b476a38a109"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="START"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing request for get-app-dependency-subflow" />
 		<ee:transform
@@ -704,12 +690,11 @@ output application/java
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<avio-core:custom-logger
+		<avio-logger:log
 			doc:name="Log End"
 			doc:id="5c28ac28-3c3b-4955-89f6-39f45fe343e4"
-			config-ref="AVIO_Core_Config_Health"
-			correlation_id="#[vars.correlationId]"
-			tracePoint="END"
+			config-ref="Health_Check_Logger_Config"
+			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing request for get-app-dependency-subflow" />
 	</sub-flow>

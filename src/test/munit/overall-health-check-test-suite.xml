@@ -95,7 +95,7 @@
 				doc:id="eed12379-e78e-4253-8fb6-3bd79851c14a"
 				actual="#[payload.mule]"
 				expected='#[{
-	"appName": "health-check-api-mule4",
+	"appName": "mule-health-check-api",
 	"runtimeVersion": mule.version,
 	"environment": "dev"
 }]' message="Mule Info does not match expected"/>

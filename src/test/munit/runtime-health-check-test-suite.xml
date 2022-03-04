@@ -97,7 +97,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				doc:id="0ff23b67-b560-4fda-83b4-08f811d14573"
 				actual="#[payload.mule]"
 				expected='#[{
-	"appName": "health-check-api-mule4",
+	"appName": "mule-health-check-api",
 	"runtimeVersion": mule.version,
 	"environment": "dev"
 }]' message="Mule Info does not match expected"/>
