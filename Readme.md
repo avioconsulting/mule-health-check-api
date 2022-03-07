@@ -45,11 +45,11 @@ This is a non-optional configuration. health-check-api.xml contains the actual i
 
 Health Check configuration has a default logging category and is configured as com.avioconsulting.healthcheck.
 
->***log.healthcheck.category=com.avioconsulting.healthcheck (by default)***
+>***healthcheck.log.category=com.avioconsulting.healthcheck (by default)***
 
 If you are implementing health-check on multiple projects its ideal to override this property.
 
->***log.healthcheck.category=com.avioconsulting.{YOUR-PROJECT}.healthcheck***
+>***healthcheck.log.category=com.avioconsulting.{YOUR-PROJECT}.healthcheck***
 
 #### 4. Testing Application Dependencies (Optional):
 
