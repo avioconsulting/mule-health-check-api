@@ -29,7 +29,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 		doc:name="Health Check Logger Config"
 		doc:id="0f95bd16-5bc4-49a3-911f-312575ec74eb"
 		applicationVersion="${healthcheck.app.version}"
-		applicationName="${healthcheck.app.name}" />
+		applicationName="${healthcheck.app.name}" defaultCategory="${healthcheck.log.category}"/>
 	<api-gateway:autodiscovery
 		apiId="${healthcheck.apiId}"
 		doc:name="API Autodiscovery"
