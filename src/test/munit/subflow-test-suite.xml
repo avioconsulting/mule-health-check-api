@@ -17,9 +17,9 @@
 				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
  ---
 payload.jvm must [ 
-	$.vmName must contain("OpenJDK"),
+	$.vmName must beString(),
 	$.vmVendor must beString(),
-	$.vmVersion must contain("1.8"),
+	$.vmVersion must beString(),
 	$.locale must beString()
 ]]]]></munit-tools:that>
 			</munit-tools:assert>
