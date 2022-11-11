@@ -42,6 +42,9 @@ jobs:
       - name: Compile
         run: ./mvnw compile
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3    
+
       - name: Verify
         run: ./mvnw --batch-mode verify
 
