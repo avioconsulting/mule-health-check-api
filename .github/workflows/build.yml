@@ -29,8 +29,8 @@ jobs:
           java-version: 8
           cache: maven
           server-id: mulesoft-ee-release
-          server-username: ${{ secrets.MULE_EE_USERNAME }} 
-          server-password: ${{ secrets.MULE_EE_PASSWORD }}
+          server-username: MULE_EE_USERNAME 
+          server-password: MULE_EE_PASSWORD
 
       - name: Set Version
         id: set-version
@@ -42,8 +42,8 @@ jobs:
       - name: Compile
         run: ./mvnw compile
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3    
+          #      - name: Setup tmate session
+          #uses: mxschmitt/action-tmate@v3    
 
       - name: Verify
         run: ./mvnw --batch-mode verify
