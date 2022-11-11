@@ -28,7 +28,7 @@ jobs:
           distribution: adopt-hotspot
           java-version: 8
           cache: maven
-          server-id: mulesoft-ee-release
+          server-id: mulesoft-ee-releases
           server-username: MULE_EE_USERNAME 
           server-password: MULE_EE_PASSWORD
 
