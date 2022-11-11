@@ -10,7 +10,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<app.runtime>4.4</app.runtime>
-		<mule.maven.plugin.version>3.8.1</mule.maven.plugin.version>
+		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
 		<ch.workertype>MICRO</ch.workertype>
 		<munit.version>2.3.13</munit.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -41,7 +41,7 @@
 						</properties>
 					</cloudHubDeployment>
 					<sharedLibraries/>
-					<classifier>mule-plugin</classifier>
+					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
