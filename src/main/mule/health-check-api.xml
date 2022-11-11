@@ -574,9 +574,9 @@ output application/java
 			</ee:variables>
 		</ee:transform>
 		<choice
-			doc:name="Choice"
+			doc:name="healthcheck.flows not empty"
 			doc:id="358eb889-b1d1-4d51-a05e-be10b59c16ae">
-			<when expression='#[payload != ""]'>
+			<when expression='#[!isEmpty(payload)]'>
 				<foreach
 					doc:name="iterate flows"
 					doc:id="2296ddab-5006-4be0-96b3-4ebc20af23e0"
@@ -679,14 +679,21 @@ output application/java
 			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
 			message="Start Processing request for get-app-dependency-subflow" />
+		<set-variable value="#[p('healthcheck.flows')]" doc:name="healthcheckFlows" doc:id="4c178a9b-4a2f-4b34-ae19-b4e07c49ce28" variableName="healthcheckFlows"/>
 		<ee:transform
 			doc:name="split by flowname"
 			doc:id="857d07b3-b442-42a9-ae83-85d7e2326d24">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/java
+
+var flows =
+	// handle null or empty string
+	if ( !isEmpty(vars.healthcheckFlows) )
+		vars.healthcheckFlows
+	else null
 ---
-(p('healthcheck.flows') splitBy ",") default ""
+(flows splitBy ",") default []
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -696,6 +703,6 @@ output application/java
 			config-ref="Health_Check_Logger_Config"
 			correlationId="#[vars.correlationId]"
 			category="${healthcheck.log.category}"
-			message="Start Processing request for get-app-dependency-subflow" />
+			message="Completed Processing request for get-app-dependency-subflow"/>
 	</sub-flow>
 </mule>
