@@ -17,9 +17,9 @@
 				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
  ---
 payload.jvm must [ 
-	$.vmName must contain("OpenJDK"),
+	$.vmName must beString(),
 	$.vmVendor must beString(),
-	$.vmVersion must contain("1.8"),
+	$.vmVersion must beString(),
 	$.locale must beString()
 ]]]]></munit-tools:that>
 			</munit-tools:assert>
@@ -107,17 +107,127 @@ payload.server must [
 			<flow-ref doc:name="Flow-ref to build-info-subflow" doc:id="df47a96c-cb92-48a4-b1e6-43117a52a1f1" name="build-info-subflow"/>
 		</munit:execution>
 	</munit:test>
-	<munit:test name="app-stats-test" doc:id="36e61ff8-8817-4605-b243-c09fa25b9960" description="Test">
+	<munit:test name="app-stats-empty-flows-test" doc:id="36e61ff8-8817-4605-b243-c09fa25b9960" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="healthcheck flows" doc:id="1aabbdb7-3a61-46c7-96ef-f993791ccee7" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e17ef7e2-5e8e-4bba-a5d7-075c7ae51a57" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
 		<munit:execution >
-			<flow-ref doc:name="Flow-ref to app-stats-flow" doc:id="cca6d4d1-612c-46ab-a915-2adf74f2f2f0" name="app-stats-flow"/>
-		</munit:execution>
-	</munit:test>
-	<munit:test name="get-app-dependency-test" doc:id="36238093-c74f-493f-994d-f6120ad10597" description="Test">
-		<munit:execution >
-			<flow-ref doc:name="Flow-ref to get-app-dependency-subflow" doc:id="e432c629-844f-476c-af82-53aab39b9d34" name="get-app-dependency-subflow"/>
+			<flow-ref doc:name="app-stats-flow" doc:id="cca6d4d1-612c-46ab-a915-2adf74f2f2f0" name="app-stats-flow"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert doc:name="Assert Array and Size" doc:id="18779e65-cbd6-47dd-9cf2-057dd847022c" >
+			<munit-tools:verify-call doc:name="no flow success response" doc:id="b75bfb43-96ab-4f7e-8ce4-47741e26bffa" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0444bd48-a7b9-479a-866a-910efd391994" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:assert doc:name="payload" doc:id="e5c19bfd-d369-40c0-aa21-24d684a22ede" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must [
+	$.backendSystems.systems must beArray(),
+	$.backendSystems.systems must haveSize(0),
+	$.systemStatus must equalTo(200)
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="app-stats-ok-test" doc:id="a2367c4f-59a5-4e20-b252-9371483185c3" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="healthcheck flows" doc:id="1fb3892d-42ff-4f5d-a85f-c4a723398837" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e17ef7e2-5e8e-4bba-a5d7-075c7ae51a57" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[["testFlow1", "testFlow2", "testFlow3"]]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="each app flows" doc:id="cbfa47ce-c631-46dc-bb67-c1a190e723ef" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="63817cd0-51b6-4344-8091-235a2c5102a3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="result" value='#[output application/json --- {&#10;	systemName: "Test System",&#10;	status: "OK",&#10;	exception: "",&#10;	timeStamp : ""&#10;}]' mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="app-stats-flow" doc:id="a1f89ab6-65ee-4554-b1c8-43898eaef759" name="app-stats-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="each app flows" doc:id="5cdfd7be-cb1e-45b5-a3d6-dc4cca1b7500" processor="flow-ref" times="3">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="63817cd0-51b6-4344-8091-235a2c5102a3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:assert doc:name="payload" doc:id="24411607-679a-4c83-b127-a4f7da3d92dc" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must [
+	$.backendSystems.systems must beArray(),
+	$.backendSystems.systems must haveSize(3),
+	$.systemStatus must equalTo(200)
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="app-stats-unknown-result-test" doc:id="1ec995d1-c208-49ad-9644-9d91aae86147" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="healthcheck flows" doc:id="95a1507c-54ca-4ced-b99b-f44d7d241e13" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e17ef7e2-5e8e-4bba-a5d7-075c7ae51a57" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[["invalidFlowName"]]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="app-stats-flow" doc:id="4e1682fa-e050-4179-a282-bb94992e1e10" name="app-stats-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="each app flows" doc:id="5bd57bf0-8cc5-466f-9f1b-7768409e1df3" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="63817cd0-51b6-4344-8091-235a2c5102a3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:assert doc:name="payload" doc:id="7bf94935-1b29-4af3-8487-38ffd9bbaf9d" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must [
+	$.backendSystems.systems must beArray(),
+	$.backendSystems.systems must haveSize(1),
+	$.systemStatus must equalTo(500)
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get-app-dependency-with-flows-test" doc:id="1aae352f-ddef-4c37-95d6-beb29e9f1f7f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="healthcheckFlows var" doc:id="8465303b-bcff-4ec7-ac9d-aa8e79317771" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4c178a9b-4a2f-4b34-ae19-b4e07c49ce28" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="healthcheckFlows" value='#["testFlow1,testFlow2,testFlow3"]' mediaType="application/java" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="get-app-dependency-subflow" doc:id="3ae53b05-d025-4f8f-85ef-61128230b7e6" name="get-app-dependency-subflow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Array and Size" doc:id="ec8fc290-b892-4411-b6a8-a0ae00fa5c3a" >
 				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
  ---
 payload must [
@@ -127,5 +237,58 @@ payload must [
 			</munit-tools:assert>
 		</munit:validation>
 	</munit:test>
-
+	<munit:test name="get-app-dependency-empty-flows-test" doc:id="cbda2964-3574-4b2f-b1b8-17eb5f826b85" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="healthcheckFlows var" doc:id="b6e5cac1-9e64-4eff-b788-237e17813c16" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4c178a9b-4a2f-4b34-ae19-b4e07c49ce28" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="healthcheckFlows" value='#[""]' mediaType="application/java" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="get-app-dependency-subflow" doc:id="658e3e74-780b-4ec3-b6ce-ec4f57c93096" name="get-app-dependency-subflow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Array and Size" doc:id="9b29af01-633b-4d2a-a49b-e77f8b5fa8a3" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must [
+	$ must beArray(),
+	$ must haveSize(0)
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get-app-dependency-null-flows-test" doc:id="4567de21-821c-48b7-92c6-0d9ac6242d62" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="healthcheckFlows var" doc:id="753f9a3b-5037-41c0-bb1d-15c8a468ad0f" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4c178a9b-4a2f-4b34-ae19-b4e07c49ce28" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="healthcheckFlows" value="#[null]" mediaType="application/java" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="get-app-dependency-subflow" doc:id="1d464b42-06f7-4bf0-b663-df9111519308" name="get-app-dependency-subflow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Array and Size" doc:id="e62f3e13-5465-46b8-a723-1fa6e58e60a1" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must [
+	$ must beArray(),
+	$ must haveSize(0)
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
 </mule>

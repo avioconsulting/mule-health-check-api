@@ -58,13 +58,15 @@
 			</http:request>
 		</munit:execution>
 		<munit:validation>
-			<munit-tools:assert-equals doc:name="Assert equals" doc:id="a8f158f8-9d10-4e82-889a-ed16d1c4cd2f" actual="#[attributes.statusCode]" expected="#[200]"/>
-			<munit-tools:assert-equals
-				doc:name="Assert equals"
-				doc:id="2000bd6b-1fd7-458a-bf19-241d0a3d7c95"
-				actual="#[payload.mule.runtimeVersion]"
-				expected="#['4.2.2']" />
-			<munit-tools:assert doc:name="Assert expression" doc:id="e4d97890-c133-4171-bd74-818bdd560918" >
+			<munit-tools:assert-equals doc:name="Status code is 200" doc:id="a8f158f8-9d10-4e82-889a-ed16d1c4cd2f" actual="#[attributes.statusCode]" expected="#[200]"/>
+			<munit-tools:assert doc:name="Runtime Version is 4.4.0" doc:id="952d9abf-2f13-4fa2-aefa-d963f5de54b2">
+				<munit-tools:that><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.mule must [
+	$.runtimeVersion must startWith('4.4.0')
+]]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert doc:name="Validate Request Block of Response" doc:id="e4d97890-c133-4171-bd74-818bdd560918" >
 				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
  ---
 payload.request must [

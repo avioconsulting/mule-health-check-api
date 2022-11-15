@@ -12,7 +12,7 @@ types:
   health-runtime: !include datatypes/health-runtime.raml
 
 /health:
-  is: [error, security]
+  is: [error]
   get:
     description: Health Check for Generic and App Specific data
     responses:
@@ -23,7 +23,7 @@ types:
             example: !include examples/health-response.raml
             
 /health/runtime:
-  is: [error, security]
+  is: [error]
   get:
     description: Performs a Generic health check of the API
     responses:
@@ -34,7 +34,7 @@ types:
             example: !include examples/health-runtime-response.raml
 
 /health/app:
-  is: [error, security]
+  is: [error]
   get:
     description: Performs the health check of the application
     responses:
