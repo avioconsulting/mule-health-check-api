@@ -117,7 +117,7 @@ jobs:
 
       - name: Set New Version Variable
         id: set-new-version
-        run: echo ::set-output name=version::$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        run: echo version=$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
