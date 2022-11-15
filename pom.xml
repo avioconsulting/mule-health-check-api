@@ -126,7 +126,7 @@
 						</properties>
 					</cloudHubDeployment>
 					<sharedLibraries/>
-					<classifier>mule-application</classifier>
+					<classifier>mule-plugin</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
