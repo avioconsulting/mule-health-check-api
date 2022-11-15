@@ -7,7 +7,7 @@
 	<packaging>mule-application</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Mule Library for exposing a health check endpoint<description>
+	<description>Mule Library for exposing a health check endpoint</description>
 	<url>https://github.com/avioconsulting/mule-health-check-api</url>
 
 	<properties>
