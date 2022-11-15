@@ -34,7 +34,7 @@ jobs:
 
       - name: Set Version
         id: set-version
-        run: echo "name=version::$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+        run: echo name=version::$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
 
       - name: Print Version
         run: echo "Version ${{ steps.set-version.outputs.version }}"
