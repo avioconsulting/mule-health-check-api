@@ -1,5 +1,0 @@
-mule : {
-	"appName": "mule-health-check-api",
-	"runtimeVersion": "4.2.2",
-	"environment": "DEV"
-}
