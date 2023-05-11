@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<core:mule
-	xmlns:core="http://www.mulesoft.org/schema/mule/core"
-	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
-	xmlns:java="http://www.mulesoft.org/schema/mule/java"
-	xmlns:avio-logger="http://www.mulesoft.org/schema/mule/avio-logger"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
-http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
-		
+<module name="AVIO Health Check"
+		category="PREMIUM"
+        prefix="module-health-check"
+        doc:description="This module relies in runtime provided components"
+
+		xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:core="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:tns="http://www.mulesoft.org/schema/mule/module-health-check"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+        xmlns:java="http://www.mulesoft.org/schema/mule/java"
+        xmlns:avio-logger="http://www.mulesoft.org/schema/mule/avio-logger"
+        xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           http://www.mulesoft.org/schema/mule/module-health-check http://www.mulesoft.org/schema/mule/module-health-check/current/mule-module-health-check.xsd
+           http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+           http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+           http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd">
+	
+	
+	<property name="attributes"  type="string" order="1" defaultValue="#[attributes]" summary="Should always be the attributes predefined var"/>
+	<property name="environment" type="string" order="2" defaultValue="#[p('env')]"   example="dev" summary="Environment Name"/>
+	<property name="logCategory" type="string" order="3" displayName="log category"   example="com.avioconsulting.mule.healthcheck" summary="Log category" use="REQUIRED"/>
+	<property name="extSysFlowNames" type="string" order="4" displayName="external systems"   example="flow-name-1,flow-name-2" summary="external systems flow names" use="OPTIONAL"/>
+	
 	<!-- copy start -->
 	
 	<core:global-property doc:name="Global Property" doc:id="f763d9e8-70f5-4867-ad45-5d7344586ad6" name="healthcheck.app.name" value="health-check-api"/>
@@ -579,4 +592,17 @@ output application/java
 			message="Start Processing request for get-app-dependency-subflow" level="DEBUG"/>
 	</core:sub-flow>
 	<!-- end copy -->
-</core:mule>
+	
+    <operation name="health-check" doc:description="health check">
+        <body>  	
+        	<core:logger level="INFO" doc:name="Log" doc:id="7f5a58b6-cea0-4585-a9fd-5d14b9ef1ee8" message="START health check operation"/>
+	        <core:flow-ref name="health-check-api-main"></core:flow-ref>
+	        <core:logger level="INFO" doc:name="Log" doc:id="7f5a58b6-cea0-4585-a9fd-5d14b9ef1ee8" message="END health check operation"/>
+        </body>
+        <output type="string" doc:description="Health Check Response" />
+        <errors>
+        	<error type="ERROR"/>
+      	</errors>
+    </operation>
+
+ </module>

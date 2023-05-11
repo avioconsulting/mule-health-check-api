@@ -1,6 +1,0 @@
-"request" : {
-    "timestamp": "2019-12-27T11:23:18.168-06:00",
-    "correlationId": "925bfc10-28cd-11ea-b774-105bad3268d7",
-    "url": "http://localhost:8081/monitor/health/runtime",
-    "status": "OK"
-}

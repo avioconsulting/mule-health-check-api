@@ -1,138 +1,104 @@
+<img src='/icon/icon.svg' width='100'>
+
 # Health Check API
-The  **health check api**  is a reusabale library consisting of mule flows and java classes packaged into a  **mule application**  . This  can be added as dependency to your project through Maven . This Mule Library when imported into your Mule project gives your application additional resources and capabilities to  **GET**  general statistical information of the Operating System Server , Mule Runtime and the Java Virtual Machine your application is deployed into . In additional to this it can also get specific application related information about the connectivity status of your mule application from the deployed environment to other application/services/systems which you  **configure**  it to interact with .
-
-There a multiple parts that needs handling for this library to make is seamlessly integrate with you application.
+The  **health check api** is a connector (version 3 was implemented using the **XML SDK**) it can be added as a maven dependency. When imported into your Mule project gives your application additional resources and capabilities to **GET** general statistical information of the Operating System Server , Mule Runtime and the Java Virtual Machine your application is deployed into. In addition to this it can also be configured to get the connectivity status of application/services/systems being used by your app.
 
 
-## Adding a pom dependency :
+## Setup
+### Repository and dependency
 
-Under <repositories> make sure to include anypoint-exchange which is required for AVIO custom logger which for this app.
+1. Grab latest code from repo and configure the pom.xml <distributionManagement> to deploy to either exchange or your client repository manager. Be sure to have a <server> with the same id configured on your .m2/settings.xml
 
+Exchange example:
 ```
-<repository> 
-    <id>anypoint-exchange</id> 
-    <name>Anypoint Exchange</name>
-    <url>https://maven.anypoint.mulesoft.com/api/v1/maven</url> 
-    <layout>default</layout> 
-</repository>
-```
-
-## Properties Configuration :
-
-There are a couple of properties that need to be set in your properties file for properly configuring Health Check API.
-
-#### 1. HTTP Configuration (Non-Optional):
-
-This is a non-optional property that is expected by Health Check HTTP listener and exposes endpoints on top of that listener.
-
->***healthcheck.https.configuration.reference=Your_HTTP_Listener_Configuration_Ref***
-
-such that YOUR_HTTP_Listener_Configuration is the HTTP listener config-ref of your implementing API.
-
-```
-<http:listener doc:name="Listener" config-ref="Your_HTTP_Listener_config_Ref" path="/*"> 
-</http:listener>
+<distributionManagement>
+    <repository>
+        <id>anypoint-exchange-v3</id>
+        <name>Exchange Repository</name>
+        <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
+    </repository>
+    <snapshotRepository>
+        <id>anypoint-exchange-v3</id>
+        <name>Exchange Snapshot Repository</name>
+        <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
+    </snapshotRepository>
+</distributionManagement>
 ```
 
-#### 2. Global Configuration Import (Non-Optional):
-
+2. Add dependency to your project
 ```
-<import doc:name="Import" file="health-check-api.xml"/>
-```
-This is a non-optional configuration. health-check-api.xml contains the actual implementation flows of the Health Check which will be invoked.
-
-#### 3. Logging Configuration (Optional) :
-
-Health Check configuration has a default logging category and is configured as com.avioconsulting.healthcheck.
-
->***healthcheck.log.category=com.avioconsulting.healthcheck (by default)***
-
-If you are implementing health-check on multiple projects its ideal to override this property.
-
->***healthcheck.log.category=com.avioconsulting.{YOUR-PROJECT}.healthcheck***
-
-#### 4. Testing Application Dependencies (Optional):
-
->***healthcheck.flows=db-health-flow,http-endpoint-subflow***
-
-These are the implementations of an API developer who wants to test their apps external dependencies to database, AWS, REST and SOAP services, etc.
-
-Property should have a value of at least one flow and if-more comma-separated name that matches the implementing flow.
-
-```
-<flow name="db-health-flow"> 
-    <!--Implementation Logic--> 
-</flow> 
-
-<sub-flow name="http-endpoint-subflow"> 
-	<!--Implementation Logic--> 
-</sub-flow>
-
+<dependency>
+  <groupId>com.avioconsulting.mule</groupId>
+  <artifactId>mule-health-check-api</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
+</dependency>
 ```
 
-The flow should return a java payload with required Status ENUM being OK, ERROR or UNKNOWN.
+### RAML and API Instance
 
-OK - Developer should send OK status if the flow is successful.
-```
-{ 
-	systemName: "DB", 
-	connectionConfig: "jdbc:sqlserver://<server-url>;<db>;<user>", 
-	user : "N/A", 
-	status: "OK", 
-	timeStamp : "2020-02-02 11:12:13" 
-}
-```
+If you want the health-check to have it’s own client application credentials (we usually do) then we need to create an API instance. We need to copy the RAML to Design Studio, publish to Exchange and create an API instance from it.
 
-ERROR - Developer should send ERROR status if the flow is unsuccessful.
-```
-{ 
-	"systemName": "Amazon S3", 
-	"connectionConfig": "N/A", 
-	"user": "N/A", 
-	"status": "ERROR", 
-	"exception": "This machine does not have access to the bucket", 
-	"timestamp": "2020-01-07 10:43:21" 
-}
-```
+## Usage
 
-UNKNOWN- Behaviour of the health check API when it doesn't find the flow. Developers shouldn't send this status in response.
-```
-{ 
-	"systemName": "<Incorrect flow Name Value>", "connectionConfig": "N/A", 
-	"user": "N/A", 
-	"status": "UNKNOWN", 
-	"exception": "Could Not Find the Flow", 
-	"timestamp": "2020-01-07 10:43:21" 
-}
-```
+Create a listener / http configuration:
 
-#### 5. Overriding health-check autodiscovery on implementation (Non-Optional)
+- Use public port 8081 or 8082
+- Use /monitor/* as the Listener Path
 
-API discovery for Health Check API needs to be added in the properties file so that certain policies can be applied to it regardless of implementing API policies.
+If needed create and API Autodiscovery configuration with the Instance ID created previously.
+- select the flow that contains the health-check Listener
 
->***healthcheck.apiId= Autodiscovery_API_ID***
+The functionality now lives inside one **operation**, we only need to create a connector configuration with the following properties:
+- **attributes**: Use default value. Should always be the attributes predefined var.
+- **environment**: Environment Name. It defaults to ‘env’ property.
+- **log category**: Required value without default to force user to enter value.
+- **external systems**: comma separated list of flow names to handle external systems
+  - The flow should return a payload with required status enum (OK, ERROR, UNKNOWN)
+  - **OK** - Developer should send OK status if the flow is successful:
+  ```
+  { 
+    systemName: "DB", 
+    connectionConfig: "jdbc:sqlserver://<server-url>;<db>;<user>", 
+    user : "N/A", 
+    status: "OK", 
+    timeStamp : "2020-02-02 11:12:13" 
+  }
+  ```
+  
+  - **ERROR** - Developer should send ERROR status if the flow is unsuccessful:
+  ```
+  { 
+    "systemName": "Amazon S3", 
+    "connectionConfig": "N/A", 
+    "user": "N/A", 
+    "status": "ERROR", 
+    "exception": "This machine does not have access to the bucket", 
+    "timestamp": "2020-01-07 10:43:21" 
+  }
+  ```
+  
+  - **UNKNOWN** - Behaviour of the health check API when it doesn't find the flow. Developers shouldn't send this status in response:
+  ```
+  { 
+    "systemName": "<Incorrect flow Name Value>", "connectionConfig": "N/A", 
+    "user": "N/A", 
+    "status": "UNKNOWN", 
+    "exception": "Could Not Find the Flow", 
+    "timestamp": "2020-01-07 10:43:21" 
+  }
+  ```
 
+## Resources
 
-### Requesting access to health-check-api on Exchange
+The following resources will be added to the base URI of your application :
 
-Once health check API is implemented on your project you need to request access to health-check-api from your application.
+<base_uri>**/monitor/health**
 
+<base_uri>**/monitor/health/runtime**
 
-## RESOURCES
+<base_uri>**/monitor/health/app**
 
-The following resources will be added to the base uri of your application :
-
-***<base_uri>/monitor/health***
-    
-***<base_uri>/monitor/health/runtime***
-    
-***<base_uri>/monitor/health/app***
-
-Eg :  base_uri= http://api.test.com/example/api/v1
-
-if everything configured correctly 
-GET to http://api.test.com/example/api/v1/monitor/health  should give the following result :
-
+/monitor/health response example:
 ```
 {
     "muleProperties": {
@@ -217,7 +183,3 @@ GET to http://api.test.com/example/api/v1/monitor/health  should give the follow
     ]
 }
 ```
-
-call to other resources will return their specific set of data. 
-
-For more information about health check api and client specific implementation please refer to the following [knowledge base article link ]([https://avioconsulting.atlassian.net/wiki/spaces/AOUM/pages/721748341/Implement+Health+Check+API+on+Mule+4](https://avioconsulting.atlassian.net/wiki/spaces/AOUM/pages/721748341/Implement+Health+Check+API+on+Mule+4))

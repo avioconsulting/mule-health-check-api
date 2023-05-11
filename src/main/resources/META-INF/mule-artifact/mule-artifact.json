@@ -1,0 +1,28 @@
+{
+  "extensionModelLoaderDescriptor": {
+    "id": "xml-based",
+    "attributes": {
+      "validate-xml": false,
+      "resources-paths": [],
+      "resource-xml": "org/mule/extensions/smart/connector/module-health check.xml"
+    }
+  },
+  "name": "health check Smart Connector",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes":{
+         "exportedResources":[
+         	"module_health_check/dw/error.dwl"
+         ],
+         "exportedPackages":[
+            "com.avioconsulting.mule.health"
+         ]
+      }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  },
+  "minMuleVersion": "4.4.0"
+}

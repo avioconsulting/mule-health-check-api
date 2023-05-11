@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>com.avioconsulting.mule</groupId>
 	<artifactId>mule-health-check-api</artifactId>
-	<version>2.0.3-SNAPSHOT</version>
-	<packaging>mule-application</packaging>
-
-	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Mule Library for exposing a health check endpoint</description>
-	<url>https://github.com/avioconsulting/mule-health-check-api</url>
+	<packaging>mule-extension</packaging>
+	<version>3.0.0-SNAPSHOT</version>
+	<name>health check</name>
+	<description>app health check</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<app.runtime>4.2.2-20211222</app.runtime>
-		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
-		<ch.workertype>MICRO</ch.workertype>
-		<munit.version>2.3.13</munit.version>
+		<mule.version>4.4.0</mule.version>
+		<mule.maven.plugin.version>3.8.2</mule.maven.plugin.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
+		<mule.extensions.maven.plugin.version>1.5.0-20221117</mule.extensions.maven.plugin.version>
 		<!-- Publish to Maven Central Properties -->
 		<project.github.repository>avioconsulting/mule-health-check-api</project.github.repository>
 		<repository.url>git@github.com:${project.github.repository}.git</repository.url>
 		<nexus.url>https://oss.sonatype.org</nexus.url>
 	</properties>
+
 	<developers>
 		<developer>
 			<name>Adam DesJardin</name>
@@ -51,11 +50,6 @@
 		</developer>
 	</developers>
 
-	<organization>
-		<name>AVIO Consulting</name>
-		<url>https://www.avioconsulting.com</url>
-	</organization>
-
 	<licenses>
 		<license>
 			<name>BSD-2-Clause</name>
@@ -73,6 +67,54 @@
 		<developerConnection>scm:ssh:${repository.url}</developerConnection>
 		<url>${repository.url}</url>
 	</scm>
+
+	<organization>
+		<name>AVIO Consulting</name>
+		<url>https://www.avioconsulting.com</url>
+	</organization>
+
+	<dependencies>
+		<!--Needed to discover the 'xml-based' XmlExtensionLoader for smart connectors-->
+		<dependency>
+			<groupId>org.mule.runtime</groupId>
+			<artifactId>mule-module-extensions-xml-support</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- -->
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<version>2.3.13</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.mule.runtime.modules</groupId>
+			<artifactId>mule-module-spring-config-ee</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.avioconsulting.mule</groupId>
+			<artifactId>mule-custom-logger</artifactId>
+			<version>2.0.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.module</groupId>
+			<artifactId>mule-java-module</artifactId>
+			<version>1.2.10</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.weave</groupId>
+			<artifactId>assertions</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -100,117 +142,28 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.mule.tools.maven</groupId>
-				<artifactId>mule-maven-plugin</artifactId>
-				<version>${mule.maven.plugin.version}</version>
+				<groupId>org.mule.runtime.plugins</groupId>
+				<artifactId>mule-extensions-maven-plugin</artifactId>
+				<version>${mule.extensions.maven.plugin.version}</version>
 				<extensions>true</extensions>
-				<configuration>
-					<cloudHubDeployment>
-						<uri>https://anypoint.mulesoft.com</uri>
-						<muleVersion>${app.runtime}</muleVersion>
-						<username>${anypoint.userName}</username>
-						<password>${anypoint.password}</password>
-						<applicationName>${application.name}</applicationName>
-						<businessGroup>${anypoint.businessGroup}</businessGroup>
-						<environment>${anypoint.environment}</environment>
-						<workerType>${ch.workertype}</workerType>
-						<properties>
-							<env>${env}</env>
-							<http.port>${http.port}</http.port>
-							<anypoint.platform.client_id>${env.clientId}</anypoint.platform.client_id>
-							<anypoint.platform.client_secret>${env.clientSecret}</anypoint.platform.client_secret>
-						</properties>
-					</cloudHubDeployment>
-					<sharedLibraries/>
-					<classifier>mule-plugin</classifier>
-				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mulesoft.munit</groupId>
+				<artifactId>munit-extensions-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.0</version>
+				<version>3.10.1</version>
 				<configuration>
 					<compilerArgs>
 						<args>-parameters</args>
 					</compilerArgs>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.mulesoft.munit.tools</groupId>
-				<artifactId>munit-maven-plugin</artifactId>
-				<version>${munit.version}</version>
-				<executions>
-					<execution>
-						<id>test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>test</goal>
-							<goal>coverage-report</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<dynamicPorts>
-						<dynamicPort>http.port</dynamicPort>
-					</dynamicPorts>
-					<coverage>
-						<runCoverage>true</runCoverage>
-						<formats>
-							<format>html</format>
-							<format>console</format>
-							<format>json</format>
-						</formats>
-					</coverage>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>com.avioconsulting.mule</groupId>
-			<artifactId>mule-custom-logger</artifactId>
-			<version>2.0.1</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.module</groupId>
-			<artifactId>mule-java-module</artifactId>
-			<version>1.2.10</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.munit</groupId>
-			<artifactId>munit-tools</artifactId>
-			<version>${munit.version}</version>
-			<classifier>mule-plugin</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.munit</groupId>
-			<artifactId>munit-runner</artifactId>
-			<version>${munit.version}</version>
-			<classifier>mule-plugin</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.modules</groupId>
-			<artifactId>mule-secure-configuration-property-module</artifactId>
-			<version>1.2.5</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-http-connector</artifactId>
-			<version>1.7.2</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-apikit-module</artifactId>
-			<version>1.7.3</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-	</dependencies>
+
 	<repositories>
 		<repository>
 			<id>mulesoft-releases</id>
@@ -260,6 +213,7 @@
 			<url>https://devops.avioconsulting.com/nexus/repository/avio-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+
 	<profiles>
 		<profile>
 			<id>maven-publish</id>
@@ -401,4 +355,5 @@
 			</build>
 		</profile>
 	</profiles>
+
 </project>
