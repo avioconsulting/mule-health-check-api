@@ -22,7 +22,7 @@ The  **health check api** is a XML connector implemented with the XML SDK. When 
 - **attributes**: Use default value. Should always be the attributes predefined variable.
 - **environment**: Environment Name. It defaults to ‘env’ property.
 - **log category**: Required value without default to force user to enter value. This gets added any health-check logs.
-- **external systems**: comma separated list of flow names to handle external systems. See [External System Montoring](#External System Monitoring) for more information.
+- **external systems**: comma separated list of flow names to handle external systems. See [External System Montoring](#markdown-header-external-system-monitoring) for more information.
 3. Add a new flow to your project, with its own http listener. Make sure to set the listener Path to `/monitor/*`
 4. Drop in the **Health Check** operation.
 
