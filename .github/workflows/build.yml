@@ -55,16 +55,16 @@ jobs:
             target/surefire-reports/*.xml
 
       - name: Set up JDK 1.8 for maven central publish
-          uses: actions/setup-java@v3
-          with:
-            distribution: adopt-hotspot
-            java-version: 8
-            cache: maven
-            server-id: ossrh
-            server-username: OSSRH_USERNAME
-            server-password: OSSRH_PASSWORD
-            gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-            gpg-passphrase:  MAVEN_GPG_PASSPHRASE
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt-hotspot
+          java-version: 8
+          cache: maven
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase:  MAVEN_GPG_PASSPHRASE
 
       - name: Publish to Maven Central
         id: publish-to-maven-central
