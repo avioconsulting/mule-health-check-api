@@ -31,12 +31,12 @@ The  **Health Check API** is a XML connector implemented with the XML SDK. When 
 Sample health-check-api.xml configuration file. Add this, and update a global configuration.
 ```
 <?xml version="1.0" encoding="UTF-8"?>
-
 <mule xmlns:module-health-check="http://www.mulesoft.org/schema/mule/module-health-check" xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/module-health-check http://www.mulesoft.org/schema/mule/module-health-check/current/mule-module-health-check.xsd">
+	<module-health-check:config name="AVIO_Health_Check_Config" doc:name="AVIO Health Check Config" doc:id="4d2d27d4-261f-48a9-bbdc-3432e5e447b4" logCategory="com.avioconsulting.health" />
 	<flow name="health-check-api-flow" doc:id="2cfc7c99-3d1a-4846-99da-37821c01fcba" >
 		<http:listener doc:name="Health Check Listener" doc:id="a37c88e3-8ebc-4f37-ab11-13395f9aa5a0" config-ref="HTTP_Listener_config" path="/monitor/*"/>
 		<module-health-check:health-check doc:name="Health check" doc:id="6d166d27-a8d3-474f-a61e-abb43478188b" config-ref="AVIO_Health_Check_Config"/>

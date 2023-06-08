@@ -6,8 +6,8 @@
 	<artifactId>mule-health-check-api</artifactId>
 	<packaging>mule-extension</packaging>
 	<version>3.0.0-SNAPSHOT</version>
-	<name>Mule Health Check Plugin</name>
-	<description>Mule Health Check Plugin</description>
+	<name>Mule Health Check API</name>
+	<description>Mule Health Check API</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
