@@ -28,7 +28,7 @@ The  **health check api** is a XML connector implemented with the XML SDK. When 
 
 ![health-check-flow](./icon/health-check-flow.png)
 
-### Securing the health-check separately
+### Securing the health-check
 
 To secure the health-check-api with its own client application credentials, the RAML must be added to the organizations Design Center and an API Instance must be created.
 1. Design Center:
@@ -142,7 +142,10 @@ Sample response from `/monitor/health`:
 
 ## External System Monitoring
 
-The health check can be used to monitor external systems. This is done through custom health flows that are added to an application. The flow should contain a simple operation or query that validates the health of the system. This typically would be a simple `GET` http request to a target system, or simple `SELECT` SQL query on a database. The implementation is left up to the developer. Any information can be returned, but must include a `status` with values of **OK**, **ERROR**, or **UNKNOWN**. Below are some sample responses from external health check flows.
+The health check can be used to monitor external systems. This is done through custom health flows that are added to an application. The flow should contain a simple operation or query that validates the health of the system. This typically would be a simple `GET` http request to a target system, or simple `SELECT` SQL query on a database. The implementation is left up to the developer. Any information can be returned, but must include a `status` with values of **OK**, **ERROR**, or **UNKNOWN**. Make sure to add the flow names to the `external systems` parameter in the Health Check configuration.  
+
+Below are some sample responses from external health check flows.
+
  ```
   { 
     "systemName": "DB", 
@@ -172,6 +175,8 @@ The health check can be used to monitor external systems. This is done through c
 ## SNAPSHOT or Local Testing
 
 If a `SNAPSHOT` version is desired, either a local install (`mvn install`) can be done, or add the Sonatype repository to the project **pom.xml** file under `pluginRepositories`.
+
+Check [Nexus Repository](https://oss.sonatype.org/#nexus-search;quick~mule-health-check-api) for a list of all available versions.
 ```
 <pluginRepository>
     <id>sonatype</id>
