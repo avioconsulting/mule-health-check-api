@@ -18,6 +18,9 @@ jobs:
       MULE_EE_USERNAME: ${{ secrets.MULE_EE_USERNAME }}
       MULE_EE_PASSWORD: ${{ secrets.MULE_EE_PASSWORD }}
 
+    outputs:
+      version: ${{ steps.set-version.outputs.version }}
+
     steps:
       - uses: actions/checkout@v3
         with:
