@@ -85,5 +85,3 @@ distributions:
   mule-health-check-api:
     artifacts:
       - path: target/mule-health-check-api-{{projectVersion}}-mule-plugin.jar
-      - path: target/mule-health-check-api-{{projectVersion}}-javadoc.jar
-      - path: target/mule-health-check-api-{{projectVersion}}-sources.jar
