@@ -1,7 +1,7 @@
 <img src='/icon/icon.svg' width='100'>
 
 # Health Check API
-The  **health check api** is a XML connector implemented with the XML SDK. When added as a maven dependency into your Mule project gives your application additional resources and capabilities to **GET** general statistical information of the Operating System Server, Mule Runtime, and the Java Virtual Machine your application is deployed into. In addition to this it can also be configured to get the connectivity status of application/services/systems being used by your application.
+The  **Health Check API** is a XML connector implemented with the XML SDK. When added as a maven dependency into your Mule project it provides the application additional resources and capabilities to **GET** general statistical information of the Operating System Server, Mule Runtime, and the Java Virtual Machine your application is deployed into. In addition to this it can also be configured to get the connectivity status of application/services/systems being used by your application.
 
 
 ## Setup
