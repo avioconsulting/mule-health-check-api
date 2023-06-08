@@ -49,6 +49,12 @@
 			<organization>AVIO Consulting</organization>
 			<organizationUrl>https://www.avioconsulting.com</organizationUrl>
 		</developer>
+		<developer>
+			<name>Kevin King</name>
+			<email>kking@avioconsulting.com</email>
+			<organization>AVIO Consulting</organization>
+			<organizationUrl>https://www.avioconsulting.com</organizationUrl>
+		</developer>
 	</developers>
 
 	<licenses>
@@ -129,16 +135,6 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.5.0</version>
 				</plugin>
-<!--				<plugin>-->
-<!--					<groupId>org.apache.maven.plugins</groupId>-->
-<!--					<artifactId>maven-gpg-plugin</artifactId>-->
-<!--					<version>1.6</version>-->
-<!--				</plugin>-->
-<!--				<plugin>-->
-<!--					<groupId>org.sonatype.plugins</groupId>-->
-<!--					<artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--					<version>1.6.8</version>-->
-<!--				</plugin>-->
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -263,22 +259,6 @@
 							</execution>
 						</executions>
 					</plugin>
-<!--					<plugin>-->
-<!--						<groupId>org.sonatype.plugins</groupId>-->
-<!--						<artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--						<extensions>true</extensions>-->
-<!--						<configuration>-->
-<!--							<serverId>ossrh</serverId>-->
-<!--							<nexusUrl>${nexus.url}</nexusUrl>-->
-<!--							<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-<!--						</configuration>-->
-<!--					</plugin>-->
-					<plugin>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-eclipse-compiler</artifactId>
-						<version>3.7.0</version>
-						<extensions>true</extensions>
-					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
@@ -339,42 +319,6 @@
 				</plugins>
 			</build>
 		</profile>
-<!--		<profile>-->
-<!--			<id>gpg-sign</id>-->
-<!--			<activation>-->
-<!--				<property>-->
-<!--					<name>release</name>-->
-<!--					<value>true</value>-->
-<!--				</property>-->
-<!--			</activation>-->
-<!--			<properties>-->
-<!--				<gpg.executable>gpg</gpg.executable>-->
-<!--			</properties>-->
-<!--			<build>-->
-<!--				<plugins>-->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-gpg-plugin</artifactId>-->
-<!--						<version>1.6</version>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<goals>-->
-<!--									<goal>sign</goal>-->
-<!--								</goals>-->
-<!--								<phase>verify</phase>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--						<configuration>-->
-<!--							&lt;!&ndash; Prevent gpg from using pinentry programs &ndash;&gt;-->
-<!--							<gpgArguments>-->
-<!--								<arg>&#45;&#45;pinentry-mode</arg>-->
-<!--								<arg>loopback</arg>-->
-<!--							</gpgArguments>-->
-<!--						</configuration>-->
-<!--					</plugin>-->
-<!--				</plugins>-->
-<!--			</build>-->
-<!--		</profile>-->
 	</profiles>
 
 </project>
