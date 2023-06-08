@@ -22,8 +22,6 @@ project:
   license: MIT
   inceptionYear: 2020
   tags:
-    - maven
-    - health check
     - mule
   java:
     groupId: com.avioconsulting.mule
@@ -36,7 +34,7 @@ release:
     draft: false
     sign: true
     releaseName: '{{tagName}}'
-    skipTag: true
+    skipTag: false
     milestone:
       close: false
     changelog:
@@ -81,10 +79,11 @@ deploy:
         closeRepository: true
         releaseRepository: true
         stagingRepositories:
-          - mule-health-check-api/target/staging-deploy
+          - target/staging-deploy
 
 distributions:
   mule-health-check-api:
     artifacts:
-      - path: mule-health-check-api/build/distributions/mule-health-check-api-{{projectVersion}}.zip
-      - path: mule-health-check-api/build/distributions/mule-health-check-api-{{projectVersion}}.tar
+      - path: target/mule-health-check-api-{{projectVersion}}-mule-plugin.jar
+      - path: target/mule-health-check-api-{{projectVersion}}-javadoc.jar
+      - path: target/mule-health-check-api-{{projectVersion}}-sources.jar

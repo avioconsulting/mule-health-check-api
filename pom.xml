@@ -135,6 +135,41 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.5.0</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>4.0.0-M8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.11.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.1.2</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -152,7 +187,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
 				<configuration>
 					<compilerArgs>
 						<args>-parameters</args>
@@ -162,7 +196,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.3.0</version>
 				<executions>
 					<execution>
 						<id>enforce-maven</id>
@@ -259,66 +292,8 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>3.1.2</version>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-plugin-plugin</artifactId>
-						<version>3.9.0</version>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>3.2.0</version>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.8.2</version>
-					</plugin>
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-install-plugin</artifactId>-->
-<!--						<version>3.1.1</version>-->
-<!--					</plugin>-->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>3.3.1</version>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-site-plugin</artifactId>
-						<version>4.0.0-M8</version>
-					</plugin>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.8.1</version>
-						<!-- 3.6.2 is the minimum -->
-						<configuration>
-							<compilerId>groovy-eclipse-compiler</compilerId>
-							<source>${maven.compiler.source}</source>
-							<target>${maven.compiler.target}</target>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.codehaus.groovy</groupId>
-								<artifactId>groovy-eclipse-compiler</artifactId>
-								<version>3.7.0</version>
-							</dependency>
-							<dependency>
-								<groupId>org.codehaus.groovy</groupId>
-								<artifactId>groovy-eclipse-batch</artifactId>
-								<version>3.0.8-01</version>
-							</dependency>
-						</dependencies>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-
 </project>
