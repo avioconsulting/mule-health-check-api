@@ -12,7 +12,7 @@ on:
       - 'main'
 
 jobs:
-  Build and Publish:
+  Build-and-Publish:
     runs-on: ubuntu-latest
     env:
       MULE_EE_USERNAME: ${{ secrets.MULE_EE_USERNAME }}
