@@ -1,104 +1,59 @@
 <img src='/icon/icon.svg' width='100'>
 
 # Health Check API
-The  **health check api** is a connector (version 3 was implemented using the **XML SDK**) it can be added as a maven dependency. When imported into your Mule project gives your application additional resources and capabilities to **GET** general statistical information of the Operating System Server , Mule Runtime and the Java Virtual Machine your application is deployed into. In addition to this it can also be configured to get the connectivity status of application/services/systems being used by your app.
+The  **health check api** is a XML connector implemented with the XML SDK. When added as a maven dependency into your Mule project gives your application additional resources and capabilities to **GET** general statistical information of the Operating System Server, Mule Runtime, and the Java Virtual Machine your application is deployed into. In addition to this it can also be configured to get the connectivity status of application/services/systems being used by your application.
 
 
 ## Setup
-### Repository and dependency
+### Project Changes
 
-1. Grab latest code from repo and configure the pom.xml <distributionManagement> to deploy to either exchange or your client repository manager. Be sure to have a <server> with the same id configured on your .m2/settings.xml
-
-Exchange example:
-```
-<distributionManagement>
-    <repository>
-        <id>anypoint-exchange-v3</id>
-        <name>Exchange Repository</name>
-        <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
-    </repository>
-    <snapshotRepository>
-        <id>anypoint-exchange-v3</id>
-        <name>Exchange Snapshot Repository</name>
-        <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
-    </snapshotRepository>
-</distributionManagement>
-```
-
-2. Add dependency to your project
+1. Add the maven dependency to the applications **pom.xml** file.  Make sure to use the latest version. 
 ```
 <dependency>
-  <groupId>com.avioconsulting.mule</groupId>
-  <artifactId>mule-health-check-api</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+    <groupId>com.avioconsulting.mule</groupId>
+    <artifactId>mule-health-check-api</artifactId>
+    <version>3.0.0</version>
+    <classifier>mule-plugin</classifier>
 </dependency>
 ```
+2. Create a Global Configuration for the **AVIO Health Check Config**.
 
-### RAML and API Instance
+![AVIO Health Check Config](./icon/health-check-config.png)
+- **attributes**: Use default value. Should always be the attributes predefined variable.
+- **environment**: Environment Name. It defaults to ‘env’ property.
+- **log category**: Required value without default to force user to enter value. This gets added any health-check logs.
+- **external systems**: comma separated list of flow names to handle external systems. See [External System Montoring](##External System Monitoring) for more information.
+3. Add a new flow to your project, with its own http listener. Make sure to set the listener Path to `/monitor/*`
+4. Drop in the **Health Check** operation.
 
-If you want the health-check to have it’s own client application credentials (we usually do) then we need to create an API instance. We need to copy the RAML to Design Studio, publish to Exchange and create an API instance from it.
+![health-check-flow](./icon/health-check-flow.png)
+
+### Securing the health-check separately
+
+To secure the health-check-api with its own client application credentials, the RAML must be added to the organizations Design Center and an API Instance must be created.
+1. Design Center:
+   1. Zip `src/main/resources/api` directory in the source code
+   2. “Create New → Import from File” Design Center project “Health Check API” with the Zipped specification
+   3. Publish specification to **Exchange** (Asset Version 1.0.0 or as applicable)
+2. API Manager:
+   1. Begin with lower environments first
+   2. Create a new API from the exchange published API - “Manage API → Manage API From Exchange”
+   3. Lookup the newly published “Health Check API for Mule 4” and Save.
+   4. Apply *Client ID Enforcement* Policy to this API.
+3. Exchange:
+   1. Search for the *Health Check API* in **Exchange** and request access to the applicable application.
+4. Project
+   1. Create an **API Autodiscovery** configuration in your project, with the *API Id* from API Manager (use best practices and store this value in an environment property file) and the name of the http listener flow that was created.
 
 ## Usage
 
-Create a listener / http configuration:
-
-- Use public port 8081 or 8082
-- Use /monitor/* as the Listener Path
-
-If needed create and API Autodiscovery configuration with the Instance ID created previously.
-- select the flow that contains the health-check Listener
-
-The functionality now lives inside one **operation**, we only need to create a connector configuration with the following properties:
-- **attributes**: Use default value. Should always be the attributes predefined var.
-- **environment**: Environment Name. It defaults to ‘env’ property.
-- **log category**: Required value without default to force user to enter value.
-- **external systems**: comma separated list of flow names to handle external systems
-  - The flow should return a payload with required status enum (OK, ERROR, UNKNOWN)
-  - **OK** - Developer should send OK status if the flow is successful:
-  ```
-  { 
-    systemName: "DB", 
-    connectionConfig: "jdbc:sqlserver://<server-url>;<db>;<user>", 
-    user : "N/A", 
-    status: "OK", 
-    timeStamp : "2020-02-02 11:12:13" 
-  }
-  ```
-  
-  - **ERROR** - Developer should send ERROR status if the flow is unsuccessful:
-  ```
-  { 
-    "systemName": "Amazon S3", 
-    "connectionConfig": "N/A", 
-    "user": "N/A", 
-    "status": "ERROR", 
-    "exception": "This machine does not have access to the bucket", 
-    "timestamp": "2020-01-07 10:43:21" 
-  }
-  ```
-  
-  - **UNKNOWN** - Behaviour of the health check API when it doesn't find the flow. Developers shouldn't send this status in response:
-  ```
-  { 
-    "systemName": "<Incorrect flow Name Value>", "connectionConfig": "N/A", 
-    "user": "N/A", 
-    "status": "UNKNOWN", 
-    "exception": "Could Not Find the Flow", 
-    "timestamp": "2020-01-07 10:43:21" 
-  }
-  ```
-
-## Resources
-
 The following resources will be added to the base URI of your application :
 
-<base_uri>**/monitor/health**
+- <base_uri>**/monitor/health** - Most commonly used endpoint that aggregates the runtime and app endpoints
+- <base_uri>**/monitor/health/runtime** - retrieves just the JVM runtime information
+- <base_uri>**/monitor/health/app** - retrieves information about the application
 
-<base_uri>**/monitor/health/runtime**
-
-<base_uri>**/monitor/health/app**
-
-/monitor/health response example:
+Sample response from `/monitor/health`:
 ```
 {
     "muleProperties": {
@@ -183,3 +138,48 @@ The following resources will be added to the base URI of your application :
     ]
 }
 ```
+
+
+## External System Monitoring
+
+The health check can be used to monitor external systems. This is done through custom health flows that are added to an application. The flow should contain a simple operation or query that validates the health of the system. This typically would be a simple `GET` http request to a target system, or simple `SELECT` SQL query on a database. The implementation is left up to the developer. Any information can be returned, but must include a `status` with values of **OK**, **ERROR**, or **UNKNOWN**. Below are some sample responses from external health check flows.
+ ```
+  { 
+    "systemName": "DB", 
+    "connectionConfig": "jdbc:sqlserver://<server-url>;<db>;<user>", 
+    "user" : "DB_USER", 
+    "status": "OK", 
+    "timeStamp" : "2020-02-02 11:12:13" 
+  }
+  ```
+  ```
+  { 
+    "systemName": "Amazon S3", 
+    "status": "ERROR", 
+    "exception": "This machine does not have access to the S3 bucket", 
+    "timestamp": "2020-01-07 10:43:21" 
+  }
+  ```
+  ```
+  { 
+    "systemName": "<Incorrect flow Name Value>",
+    "status": "UNKNOWN", 
+    "exception": "Could Not Find the Flow", 
+    "timestamp": "2020-01-07 10:43:21" 
+  }
+  ```
+
+## SNAPSHOT or Local Testing
+
+If a `SNAPSHOT` version is desired, either a local install (`mvn install`) can be done, or add the Sonatype repository to the project **pom.xml** file under `pluginRepositories`.
+```
+<pluginRepository>
+    <id>sonatype</id>
+    <name>Nexus Repository</name>
+    <layout>default</layout>
+    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+</pluginRepository>
+```
+
+
+

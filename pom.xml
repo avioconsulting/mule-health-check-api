@@ -6,8 +6,8 @@
 	<artifactId>mule-health-check-api</artifactId>
 	<packaging>mule-extension</packaging>
 	<version>3.0.0-SNAPSHOT</version>
-	<name>health check</name>
-	<description>app health check</description>
+	<name>Mule Health Check Plugin</name>
+	<description>Mule Health Check Plugin</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,6 +17,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<mule.extensions.maven.plugin.version>1.5.0-20221117</mule.extensions.maven.plugin.version>
+		<avio.logger.version>2.0.1</avio.logger.version>
 		<!-- Publish to Maven Central Properties -->
 		<project.github.repository>avioconsulting/mule-health-check-api</project.github.repository>
 		<repository.url>git@github.com:${project.github.repository}.git</repository.url>
@@ -98,7 +99,7 @@
 		<dependency>
 			<groupId>com.avioconsulting.mule</groupId>
 			<artifactId>mule-custom-logger</artifactId>
-			<version>2.0.1</version>
+			<version>${avio.logger.version}</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
