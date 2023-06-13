@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'feature/**'
       - 'chore/**'
       - 'feat/**'
   pull_request:
@@ -59,6 +58,7 @@ jobs:
 
       - name: Set up JDK 1.8 for maven central publish
         uses: actions/setup-java@v3
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main'}}
         with:
           distribution: adopt-hotspot
           java-version: 8
@@ -89,7 +89,7 @@ jobs:
           submodules: 'recursive'
 
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: adopt-hotspot
           java-version: 8
