@@ -79,7 +79,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: JReleaser full-Release
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main'}}
         uses: jreleaser/release-action@v2
         env:
           JRELEASER_PROJECT_VERSION: ${{steps.set-version.outputs.version}}
@@ -93,6 +93,15 @@ jobs:
         with:
           version: ${{ env.JRELEASER_VERSION }}
           arguments: full-release
+
+      - name: JReleaser release output
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main'}}
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-release
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties          
 
   Perform-Release:
     runs-on: ubuntu-latest
@@ -112,19 +121,10 @@ jobs:
           java-version: 8
           cache: maven
 
-      - name: Tag Release
-        env:
-          GIT_USER: ${{ secrets.GIT_USER }}
-          GIT_PASSWORD: ${{ secrets.GIT_TOKEN }}
-        run: |
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-          git remote set-url origin "https://${{github.actor}}:${{ github.token }}@github.com/${{ github.repository }}.git"
-          git tag -a "v${{ steps.set-version.outputs.version }}" "${{ github.sha }}"  -m "Version ${{ steps.set-version.outputs.version }}"
-          git push --follow-tags
       - name: Increment Version
         run: |
           ./mvnw clean build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT -DprocessAllModules versions:commit
+
       - name: Set New Version Variable
         id: set-new-version
         run: echo version=$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
