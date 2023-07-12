@@ -1,4 +1,4 @@
-name: Maven Build and Release for Mule-Plugin
+name: Maven Build and Release for mule-health-check-api
 
 on:
   push:
