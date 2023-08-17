@@ -5,6 +5,7 @@ import java.util.List;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
+import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.lang.management.GarbageCollectorMXBean;
 import com.sun.management.OperatingSystemMXBean;
@@ -59,6 +60,9 @@ public class JvmInfo {
 			stats.setMemoryStats(memStats);
 			stats.setThreadStats(threadStats);
 			stats.setGarbageCollectionStats(gcStats);
+			
+			OSStats osStats = getOsStats();
+			stats.setOsStats(osStats);
 			return stats;
 
 
