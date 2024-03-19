@@ -25,8 +25,8 @@
 	<property name="environment" type="string" order="2" displayName="Environment" example="dev" summary="Environment Name" defaultValue="#[p('env')]" use="OPTIONAL"/>
 	<property name="logCategory" type="string" order="3" displayName="Log category"   example="com.avioconsulting.mule.healthcheck" summary="Log category" use="REQUIRED"/>
 	<property name="extSysFlowNames" type="string" order="4" displayName="External systems" example="flow-name-1,flow-name-2" summary="external systems flow names" use="OPTIONAL"/>
-	<property name="healthCheckAppName" type="string" order="5" displayName="Logger app name" example="${app.name}" summary="Environment Name" defaultValue="health-check-api" use="OPTIONAL"/>
-	<property name="healthCheckAppVersion" type="string" order="6" displayName="Logger app version" example="${app.version}" summary="Environment Name" defaultValue="3.0.2" use="OPTIONAL"/>
+	<property name="healthCheckAppName" type="string" order="5" displayName="Logger app name" example="application-name" summary="health check app name" defaultValue="#[p('app.name')]" use="OPTIONAL"/>
+	<property name="healthCheckAppVersion" type="string" order="6" displayName="Logger app version" example="1.0.0" summary="heatlh check app version" defaultValue="#[p('app.version')]" use="OPTIONAL"/>
 	
 	<!-- copy start -->
 	
