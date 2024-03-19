@@ -595,10 +595,8 @@ output application/java
 	
     <operation name="health-check" doc:description="health check">
         <body>  	
-        	<core:logger level="INFO" doc:name="Log" doc:id="7f5a58b6-cea0-4585-a9fd-5d14b9ef1ee8" message="START health check operation"/>
-	        <core:flow-ref name="health-check-api-main"></core:flow-ref>
-	        <core:logger level="INFO" doc:name="Log" doc:id="7f5a58b6-cea0-4585-a9fd-5d14b9ef1ee8" message="END health check operation"/>
-        </body>
+        	<core:flow-ref name="health-check-api-main"></core:flow-ref>
+	     </body>
         <output type="string" doc:description="Health Check Response" />
         <errors>
         	<error type="ERROR"/>
