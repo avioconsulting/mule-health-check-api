@@ -20,13 +20,11 @@
            http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
            http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd">
 	
+	<core:global-property name="healthcheck.log.category" value="com.avioconsulting.mule.healthcheck" />
 	
 	<property name="attributes"  type="string" order="1" displayName="Attributes" example="${attributes}" summary="Should always be the attributes predefined var" defaultValue="#[attributes]" use="OPTIONAL"/>
-	<property name="environment" type="string" order="2" displayName="Environment" example="dev" summary="Environment Name" defaultValue="#[p('env')]" use="OPTIONAL"/>
-	<property name="logCategory" type="string" order="3" displayName="Log category"   example="com.avioconsulting.mule.healthcheck" summary="Log category" use="REQUIRED"/>
-	<property name="extSysFlowNames" type="string" order="4" displayName="External systems" example="flow-name-1,flow-name-2" summary="external systems flow names" use="OPTIONAL"/>
-	<property name="healthCheckAppName" type="string" order="5" displayName="Logger app name" example="application-name" summary="health check app name" defaultValue="#[p('app.name')]" use="OPTIONAL"/>
-	<property name="healthCheckAppVersion" type="string" order="6" displayName="Logger app version" example="1.0.0" summary="heatlh check app version" defaultValue="#[p('app.version')]" use="OPTIONAL"/>
+	<property name="environment" type="string" order="2" displayName="Environment" example="dev" summary="Environment Name" defaultValue="${env}" use="OPTIONAL"/>
+	<property name="extSysFlowNames" type="string" order="3" displayName="External systems" example="flow-name-1,flow-name-2" summary="external systems flow names" use="OPTIONAL"/>
 	
 	<!-- copy start -->
 	
@@ -34,8 +32,9 @@
 		name="Health_Check_Logger_Config"
 		doc:name="Health Check Logger Config"
 		doc:id="6e6c93ab-10c7-42bc-a5d2-1bcd3bbf60a9"
-		applicationVersion="#[vars.healthCheckAppVersion]"
-		applicationName="#[vars.healthCheckAppName]" defaultCategory="#[vars.logCategory]"/>
+		environment="${env}"
+		applicationVersion="${app.version}"
+		applicationName="${app.name}" defaultCategory="${healthcheck.log.category}"/>
 	
 	<core:flow name="health-check-api-main" doc:id="64462ee8-2b0e-4d81-9bfd-a737cfd3c113">
 		<core:choice doc:name="resource" doc:id="1f6eb6e8-c3e5-4434-82b5-c70c935b57b0" >
