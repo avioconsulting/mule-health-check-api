@@ -7,7 +7,7 @@
 	<groupId>com.avioconsulting.mule</groupId>
 	<artifactId>mule-health-check-api</artifactId>
 	<packaging>mule-extension</packaging>
-	<version>3.0.2-SNAPSHOT</version>
+	<version>3.1.0-SNAPSHOT</version>
 	<name>Mule Health Check API</name>
 	<description>Mule Health Check API</description>
 	<url>https://github.com/avioconsulting/mule-health-check-api</url>
@@ -29,7 +29,7 @@
 		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
 		<maven.enforcer.plugin.version>3.3.0</maven.enforcer.plugin.version>
 		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
-		<avio.logger.version>2.0.1</avio.logger.version>
+		<avio.logger.version>3.0.0</avio.logger.version>
 		<munit.version>2.3.18</munit.version>
 		<munit.input.directory>src/test/munit</munit.input.directory>
 		<munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>org.mule.module</groupId>
 			<artifactId>mule-java-module</artifactId>
-			<version>1.2.10</version>
+			<version>1.2.13</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
