@@ -54,7 +54,7 @@
 			doc:name="Log Start"
 			doc:id="1c37691b-e1c5-4bfa-be28-f53fa55f289f"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			
 			message="Start Processing Request for /health endpoint" level="DEBUG"/>
 		<core:flow-ref
@@ -109,11 +109,11 @@ vars.appStats.systemStatus]]></ee:set-variable>
 			doc:name="Log End"
 			doc:id="8917e3f9-5437-4cf7-ae77-648a8010e34e"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Completed Processing Request for /health endpoint" level="DEBUG"/>
 		<core:error-handler>
 			<core:on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="db908365-e55a-458f-a4fc-824b7fc13ba2" >
-				<avio-logger:log doc:name="Log Error" doc:id="7ce61ac7-8bb8-4619-9706-473bead7593e" config-ref="Health_Check_Logger_Config" correlationId="#[vars.correlationId]" message="Error Processing Request for /health endpoint" level="ERROR" payload='#[write(payload,"application/json")]' statusCode="500" type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]' detail="#[error.detailedDescription]" />
+				<avio-logger:log doc:name="Log Error" doc:id="7ce61ac7-8bb8-4619-9706-473bead7593e" config-ref="Health_Check_Logger_Config" correlationId="#[correlationId]" message="Error Processing Request for /health endpoint" level="ERROR" payload='#[write(payload,"application/json")]' statusCode="500" type='#[error.errorType.namespace ++ ":" ++ error.errorType.identifier]' detail="#[error.detailedDescription]" />
 				<ee:transform doc:name="error message" doc:id="36d5b959-588e-4ccb-9682-4af441837f1f">
 					<ee:message>
 					</ee:message>
@@ -130,7 +130,7 @@ vars.appStats.systemStatus]]></ee:set-variable>
 			doc:name="Log Start"
 			doc:id="3e2cfb8b-56e2-44e7-8d31-d63d10993df4"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Start Processing Request for health/app health Check endpoint" level="DEBUG"/>
 		<core:flow-ref
 			doc:name="request-info-subflow"
@@ -172,7 +172,7 @@ vars.appStats.systemStatus]]></ee:set-variable>
 			doc:name="Log End"
 			doc:id="29a6964e-b026-46fb-b155-ae8f7e419ccb"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Completed Processing Request for health/app health Check endpoint" level="DEBUG"/>
 		<core:error-handler>
 			<core:on-error-propagate
@@ -184,7 +184,7 @@ vars.appStats.systemStatus]]></ee:set-variable>
 					doc:name="Log Error"
 					doc:id="208d8ab3-ed2b-4bf9-a3e8-a1b99b206a3d"
 					config-ref="Health_Check_Logger_Config"
-					correlationId="#[vars.correlationId]"
+					correlationId="#[correlationId]"
 					message="Error Processing Request for /health/app endpoint"
 					level="ERROR"
 					payload='#[write(payload,"application/json")]'
@@ -206,7 +206,7 @@ vars.appStats.systemStatus]]></ee:set-variable>
 			doc:name="Log Start"
 			doc:id="6cb1794f-1844-40c2-a9d4-ad954467da78"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Start Processing Request for /health/runtime health Check endpoint" level="DEBUG"/>
 		<core:flow-ref
 			doc:name="request-info-subflow"
@@ -251,7 +251,7 @@ vars.jvmInfo]]></ee:set-payload>
 			doc:name="Log End"
 			doc:id="3234da30-98a1-4b34-acfc-3b5a69961528"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Completed Processing Request for  /health/runtime health Check endpoint" level="DEBUG"/>
 		<core:error-handler>
 			<core:on-error-propagate
@@ -263,7 +263,7 @@ vars.jvmInfo]]></ee:set-payload>
 					doc:name="Log Error"
 					doc:id="649f7463-3d1c-485a-9ce3-f6f5e1e2e623"
 					config-ref="Health_Check_Logger_Config"
-					correlationId="#[vars.correlationId]"
+					correlationId="#[correlationId]"
 					message="Error Processing Request for /health/runtime endpoint"
 					level="ERROR"
 					payload='#[write(payload,"application/json")]'
@@ -287,7 +287,7 @@ vars.jvmInfo]]></ee:set-payload>
 			doc:name="Log Start"
 			doc:id="b13b7260-e265-491d-8a16-f2343b3aa9e6"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Start processing request for Runtime Stats SubFlow" level="DEBUG"/>
 		<java:invoke-static
 			doc:name="Invoke getJvmStats"
@@ -340,7 +340,7 @@ var jvmStats = payload
 			doc:name="Log End"
 			doc:id="030c7def-c851-4ba6-a945-a61fba1a2e7e"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Completed processing request for Runtime Stats Flow" level="DEBUG"/>
 	</core:sub-flow>
 	<core:sub-flow
@@ -355,7 +355,7 @@ output application/json
 ---
 "request" : {
 	"timestamp" : now(),
-	"correlationId" : vars.correlationId,
+	"correlationId" : correlationId,
 	"url": vars.attributes.scheme ++ '://'  ++ vars.attributes.headers.host ++ vars.attributes.rawRequestPath default "",
 	"status" : "OK"
 }]]></ee:set-payload>
@@ -451,7 +451,7 @@ output application/java
 			doc:name="Log Start"
 			doc:id="bbaa04ba-15fd-4693-807d-091b79abada7"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Start Processing request for app-stats-flows" level="DEBUG"/>
 		<core:flow-ref
 			doc:name="get-app-dependency-subflow"
@@ -560,7 +560,7 @@ output application/java
 			doc:name="Log End"
 			doc:id="f5cb1d08-1e76-412f-90d2-f6a983cd1b6b"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Completed Processing request for app-stats-flows" level="DEBUG"/>
 	</core:sub-flow>
 	<core:sub-flow
@@ -570,7 +570,7 @@ output application/java
 			doc:name="Log Start"
 			doc:id="61beb08d-cf38-425a-8fa4-8a46de993e6b"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Start Processing request for get-app-dependency-subflow" level="DEBUG"/>
 		<ee:transform
 			doc:name="split by flowname"
@@ -587,7 +587,7 @@ output application/java
 			doc:name="Log End"
 			doc:id="b0187770-3a89-4b11-85f4-7148ac60f648"
 			config-ref="Health_Check_Logger_Config"
-			correlationId="#[vars.correlationId]"
+			correlationId="#[correlationId]"
 			message="Start Processing request for get-app-dependency-subflow" level="DEBUG"/>
 	</core:sub-flow>
 	<!-- end copy -->
