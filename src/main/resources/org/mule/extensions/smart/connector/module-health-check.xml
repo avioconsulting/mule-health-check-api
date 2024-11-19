@@ -20,22 +20,21 @@
            http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
            http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd">
 	
+	<core:global-property name="healthcheck.log.category" value="com.avioconsulting.mule.healthcheck" />
 	
-	<property name="attributes"  type="string" order="1" defaultValue="#[attributes]" summary="Should always be the attributes predefined var"/>
-	<property name="environment" type="string" order="2" defaultValue="#[p('env')]"   example="dev" summary="Environment Name"/>
-	<property name="logCategory" type="string" order="3" displayName="log category"   example="com.avioconsulting.mule.healthcheck" summary="Log category" use="REQUIRED"/>
-	<property name="extSysFlowNames" type="string" order="4" displayName="external systems"   example="flow-name-1,flow-name-2" summary="external systems flow names" use="OPTIONAL"/>
+	<property name="attributes"  type="string" order="1" displayName="Attributes" example="${attributes}" summary="Should always be the attributes predefined var" defaultValue="#[attributes]" use="OPTIONAL"/>
+	<property name="environment" type="string" order="2" displayName="Environment" example="dev" summary="Environment Name" defaultValue="${env}" use="OPTIONAL"/>
+	<property name="extSysFlowNames" type="string" order="3" displayName="External systems" example="flow-name-1,flow-name-2" summary="external systems flow names" use="OPTIONAL"/>
 	
 	<!-- copy start -->
 	
-	<core:global-property doc:name="Global Property" doc:id="f763d9e8-70f5-4867-ad45-5d7344586ad6" name="healthcheck.app.name" value="health-check-api"/>
-	<core:global-property doc:name="Global Property" doc:id="7199bc99-bf49-43c5-92f4-8e11e614aef9" name="healthcheck.app.version" value="3.0.0"/>
 	<avio-logger:config
 		name="Health_Check_Logger_Config"
 		doc:name="Health Check Logger Config"
 		doc:id="6e6c93ab-10c7-42bc-a5d2-1bcd3bbf60a9"
-		applicationVersion="${healthcheck.app.version}"
-		applicationName="${healthcheck.app.name}" defaultCategory="#[vars.logCategory]"/>
+		environment="${env}"
+		applicationVersion="${app.version}"
+		applicationName="${app.name}" defaultCategory="${healthcheck.log.category}"/>
 	
 	<core:flow name="health-check-api-main" doc:id="64462ee8-2b0e-4d81-9bfd-a737cfd3c113">
 		<core:choice doc:name="resource" doc:id="1f6eb6e8-c3e5-4434-82b5-c70c935b57b0" >
@@ -595,10 +594,8 @@ output application/java
 	
     <operation name="health-check" doc:description="health check">
         <body>  	
-        	<core:logger level="INFO" doc:name="Log" doc:id="7f5a58b6-cea0-4585-a9fd-5d14b9ef1ee8" message="START health check operation"/>
-	        <core:flow-ref name="health-check-api-main"></core:flow-ref>
-	        <core:logger level="INFO" doc:name="Log" doc:id="7f5a58b6-cea0-4585-a9fd-5d14b9ef1ee8" message="END health check operation"/>
-        </body>
+        	<core:flow-ref name="health-check-api-main"></core:flow-ref>
+	     </body>
         <output type="string" doc:description="Health Check Response" />
         <errors>
         	<error type="ERROR"/>

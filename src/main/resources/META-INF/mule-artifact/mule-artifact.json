@@ -4,7 +4,7 @@
     "attributes": {
       "validate-xml": false,
       "resources-paths": [],
-      "resource-xml": "org/mule/extensions/smart/connector/module-health check.xml"
+      "resource-xml": "org/mule/extensions/smart/connector/module-health-check.xml"
     }
   },
   "name": "health check Smart Connector",
