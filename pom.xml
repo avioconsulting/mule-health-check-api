@@ -77,7 +77,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <mule.version>4.4.0</mule.version>
     <mule.extensions.maven.plugin.version>1.10.0</mule.extensions.maven.plugin.version>
-    <avio.logger.version>3.0.0</avio.logger.version>
+    <avio.logger.version>3.1.1</avio.logger.version>
     <munit.version>2.3.18</munit.version>
     <munit.input.directory>src/test/munit</munit.input.directory>
     <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
@@ -117,7 +117,7 @@
     <dependency>
       <groupId>org.mule.module</groupId>
       <artifactId>mule-java-module</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
       <classifier>mule-plugin</classifier>
     </dependency>
     <dependency>
