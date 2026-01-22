@@ -1,0 +1,114 @@
+
+
+= AVIO Health Check Module Connector Reference
+
+
+This module relies in runtime provided components
+
+
+
+== Configurations
+---
+[[Config]]
+=== Config
+
+
+==== Parameters
+
+[%header%autowidth.spread]
+|===
+| Name | Type | Description | Default Value | Required
+|Name | String | The name for this configuration. Connectors reference the configuration with this name. | | *x*{nbsp}
+| Attributes a| String |  Should always be the attributes predefined var |  #[attributes] | {nbsp}
+| Environment a| String |  Environment Name |  ${env} | {nbsp}
+| External systems a| String |  external systems flow names |  | {nbsp}
+| Name a| String |  The identifier of this element used to reference it in other components |  | *x*{nbsp}
+| Expiration Policy a| <<ExpirationPolicy>> |  Configures the minimum amount of time that a dynamic configuration instance can remain idle before the runtime considers it eligible for expiration. This does not mean that the platform will expire the instance at the exact moment that it becomes eligible. The runtime will actually purge the instances when it sees it fit. |  | {nbsp}
+|===
+
+
+==== Associated Operations
+* <<HealthCheck>> {nbsp}
+
+
+
+== Operations
+
+[[HealthCheck]]
+== Health Check
+`<module-health-check:health-check>`
+
+
+health check
+
+
+=== Parameters
+
+[%header%autowidth.spread]
+|===
+| Name | Type | Description | Default Value | Required
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Config Ref a| ConfigurationProvider |  The name of the configuration to be used to execute this component |  | {nbsp}
+| Target Variable a| String |  The name of a variable on which the operation's output will be placed |  | {nbsp}
+| Target Value a| String |  An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable |  #[payload] | {nbsp}
+| Error Mappings a| Array of <<ErrorMapping>> |  Set of error mappings |  | {nbsp}
+|===
+
+=== Output
+
+[%autowidth.spread]
+|===
+| *Type* a| String
+|===
+
+=== For Configurations
+
+* <<Config>> {nbsp}
+
+=== Throws
+
+* MODULE-HEALTH-CHECK:ERROR {nbsp}
+
+
+
+== Types
+[[ExpirationPolicy]]
+=== Expiration Policy
+
+[cols=".^20%,.^25%,.^30%,.^15%,.^10%", options="header"]
+|======================
+| Field | Type | Description | Default Value | Required
+| Max Idle Time a| Number | A scalar time value for the maximum amount of time a dynamic configuration instance should be allowed to be idle before it's considered eligible for expiration |  | 
+| Time Unit a| Enumeration, one of:
+
+** NANOSECONDS
+** MICROSECONDS
+** MILLISECONDS
+** SECONDS
+** MINUTES
+** HOURS
+** DAYS | A time unit that qualifies the maxIdleTime attribute |  | 
+|======================
+
+[[ErrorMapping]]
+=== Error Mapping
+
+[cols=".^20%,.^25%,.^30%,.^15%,.^10%", options="header"]
+|======================
+| Field | Type | Description | Default Value | Required
+| Source a| Enumeration, one of:
+
+** ANY
+** REDELIVERY_EXHAUSTED
+** TRANSFORMATION
+** EXPRESSION
+** SECURITY
+** CLIENT_SECURITY
+** SERVER_SECURITY
+** ROUTING
+** CONNECTIVITY
+** RETRY_EXHAUSTED
+** TIMEOUT |  |  | 
+| Target a| String |  |  | x
+|======================
+

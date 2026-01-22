@@ -71,11 +71,6 @@ release:
         - search: 'deps: '
         - search: 'test: '
         - search: 'docs: '
-      hide:
-        categories:
-          - 'merge'
-        contributors:
-          - 'GitHub'
 
 checksum:
   individual: true
