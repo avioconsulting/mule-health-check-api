@@ -1,72 +1,70 @@
 package com.avioconsulting.mule.health;
 
 public class OSStats {
-	
-	private double systemLoadAverage;
-	
-	private int availableProcessors;
-	private long freePhysicalMemorySize;
-	private long processCpuTime;
-	private double systemCpuLoad;
-	private double processCpuLoad;
-	private String pid;
-	
 
-	public double getSystemLoadAverage() {
-		return systemLoadAverage;
-	}
+  private double systemLoadAverage;
 
-	public void setSystemLoadAverage(double systemLoadAverage) {
-		this.systemLoadAverage = systemLoadAverage;
-	}
+  private int availableProcessors;
+  private long freePhysicalMemorySize;
+  private long processCpuTime;
+  private double systemCpuLoad;
+  private double processCpuLoad;
+  private String pid;
 
-	public int getAvailableProcessors() {
-		return availableProcessors;
-	}
+  public double getSystemLoadAverage() {
+    return systemLoadAverage;
+  }
 
-	public void setAvailableProcessors(int availableProcessors) {
-		this.availableProcessors = availableProcessors;
-	}
+  public void setSystemLoadAverage(double systemLoadAverage) {
+    this.systemLoadAverage = systemLoadAverage;
+  }
 
-	public long getFreePhysicalMemorySize() {
-		return freePhysicalMemorySize;
-	}
+  public int getAvailableProcessors() {
+    return availableProcessors;
+  }
 
-	public void setFreePhysicalMemorySize(long freePhysicalMemorySize) {
-		this.freePhysicalMemorySize = freePhysicalMemorySize;
-	}
+  public void setAvailableProcessors(int availableProcessors) {
+    this.availableProcessors = availableProcessors;
+  }
 
-	public long getProcessCpuTime() {
-		return processCpuTime;
-	}
+  public long getFreePhysicalMemorySize() {
+    return freePhysicalMemorySize;
+  }
 
-	public void setProcessCpuTime(long processCpuTime) {
-		this.processCpuTime = processCpuTime;
-	}
+  public void setFreePhysicalMemorySize(long freePhysicalMemorySize) {
+    this.freePhysicalMemorySize = freePhysicalMemorySize;
+  }
 
-	public double getSystemCpuLoad() {
-		return systemCpuLoad;
-	}
+  public long getProcessCpuTime() {
+    return processCpuTime;
+  }
 
-	public void setSystemCpuLoad(double systemCpuLoad) {
-		this.systemCpuLoad = systemCpuLoad;
-	}
+  public void setProcessCpuTime(long processCpuTime) {
+    this.processCpuTime = processCpuTime;
+  }
 
-	public double getProcessCpuLoad() {
-		return processCpuLoad;
-	}
+  public double getSystemCpuLoad() {
+    return systemCpuLoad;
+  }
 
-	public void setProcessCpuLoad(double processCpuLoad) {
-		this.processCpuLoad = processCpuLoad;
-	}
+  public void setSystemCpuLoad(double systemCpuLoad) {
+    this.systemCpuLoad = systemCpuLoad;
+  }
 
-	public String getPid() {
-		return pid;
-	}
+  public double getProcessCpuLoad() {
+    return processCpuLoad;
+  }
 
-	public void setPid(String pid) {
-		this.pid = pid;
-	}	
-	
+  public void setProcessCpuLoad(double processCpuLoad) {
+    this.processCpuLoad = processCpuLoad;
+  }
+
+  public String getPid() {
+    return pid;
+  }
+
+  public void setPid(String pid) {
+    this.pid = pid;
+  }
 
 }

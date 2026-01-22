@@ -7,7 +7,7 @@ The  **Health Check API** is a XML connector implemented with the XML SDK. When 
 ## Setup
 ### Project Changes
 
-1. Add the maven dependency to the applications **pom.xml** file.  Make sure to use the latest version. 
+1. Add the maven dependency to the applications **pom.xml** file.  Make sure to use the latest version.
 ```
 <dependency>
     <groupId>com.avioconsulting.mule</groupId>
@@ -23,11 +23,11 @@ The  **Health Check API** is a XML connector implemented with the XML SDK. When 
 - **environment**: Environment Name. It defaults to ‘env’ property.
 - **external systems**: comma separated list of flow names to handle external systems. See [External System Montoring](#external-system-monitoring) for more information.
 
-3. Logging setup for Health check related functionality uses [mule-custom-logger](https://github.com/avioconsulting/mule-custom-logger) module. The logger configuration requires following environment properties defined by the consumer application - 
+3. Logging setup for Health check related functionality uses [mule-custom-logger](https://github.com/avioconsulting/mule-custom-logger) module. The logger configuration requires following environment properties defined by the consumer application -
 - `env` defining the Mule Environment name
 - `app.name` defining the name of the application being monitored
 - `app.version` defining the version of the application being monitored
-- `healthcheck.log.category` defaulted to `com.avioconsulting.mule.healthcheck` and can be used to control health check logging  
+- `healthcheck.log.category` defaulted to `com.avioconsulting.mule.healthcheck` and can be used to control health check logging
 
 4. Add a new flow to your project, with its own http listener. This should use the same global HTTP listener configuration already defined in the application. Make sure to set the listener Path to `/monitor/*`
 
@@ -39,15 +39,15 @@ Sample health-check-api.xml configuration file. Add this, and update a global co
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns:module-health-check="http://www.mulesoft.org/schema/mule/module-health-check" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/module-health-check http://www.mulesoft.org/schema/mule/module-health-check/current/mule-module-health-check.xsd">
-	<module-health-check:config name="AVIO_Health_Check_Config" doc:name="AVIO Health Check Config"/>
-	<flow name="health-check-api-flow" doc:id="2cfc7c99-3d1a-4846-99da-37821c01fcba" >
-		<http:listener doc:name="Health Check Listener" doc:id="a37c88e3-8ebc-4f37-ab11-13395f9aa5a0" config-ref="HTTP_Listener_config" path="/monitor/*"/>
-		<module-health-check:health-check doc:name="Health check" doc:id="6d166d27-a8d3-474f-a61e-abb43478188b" config-ref="AVIO_Health_Check_Config"/>
-	</flow>
+  <module-health-check:config name="AVIO_Health_Check_Config" doc:name="AVIO Health Check Config"/>
+  <flow name="health-check-api-flow" doc:id="2cfc7c99-3d1a-4846-99da-37821c01fcba" >
+    <http:listener doc:name="Health Check Listener" doc:id="a37c88e3-8ebc-4f37-ab11-13395f9aa5a0" config-ref="HTTP_Listener_config" path="/monitor/*"/>
+    <module-health-check:health-check doc:name="Health check" doc:id="6d166d27-a8d3-474f-a61e-abb43478188b" config-ref="AVIO_Health_Check_Config"/>
+  </flow>
 </mule>
 ```
 
@@ -165,7 +165,7 @@ Sample response from `/monitor/health`:
 
 ## External System Monitoring
 
-The health check can be used to monitor external systems. This is done through custom health flows that are added to an application. The flow should contain a simple operation or query that validates the health of the system. This typically would be a simple `GET` http request to a target system, or simple `SELECT` SQL query on a database. The implementation is left up to the developer. See [system-check.raml](./src/main/resources/api/datatypes/system-check.raml), for a RAML reference to the response object. The response must include `systemName`, `status` with values of **OK**, **ERROR**, or **UNKNOWN**, and `timestamp` fields. Make sure to add the flow names to the `external systems` parameter in the Health Check configuration.  
+The health check can be used to monitor external systems. This is done through custom health flows that are added to an application. The flow should contain a simple operation or query that validates the health of the system. This typically would be a simple `GET` http request to a target system, or simple `SELECT` SQL query on a database. The implementation is left up to the developer. See [system-check.raml](./src/main/resources/api/datatypes/system-check.raml), for a RAML reference to the response object. The response must include `systemName`, `status` with values of **OK**, **ERROR**, or **UNKNOWN**, and `timestamp` fields. Make sure to add the flow names to the `external systems` parameter in the Health Check configuration.
 
 Below are some sample responses from external health check flows.
 
@@ -210,6 +210,3 @@ Check [Nexus Repository](https://oss.sonatype.org/#nexus-search;quick~mule-healt
     <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 </pluginRepository>
 ```
-
-
-
